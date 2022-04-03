@@ -1,8 +1,8 @@
 class Tile extends GameObject {
     #feet = null;
-    constructor(x, y, size) {
-        super(x, y, size, size, true);
-        this.debug = true;
+    constructor(x, y, w, h) {
+        super(x, y, w, h, true);
+        // this.debug = true;
         this.setCollider("rectangle");
     }
 }
