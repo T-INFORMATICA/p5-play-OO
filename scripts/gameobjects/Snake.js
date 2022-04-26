@@ -15,7 +15,7 @@ class Snake extends GameObject {
     Update() { 
         this.#timer += deltaTime;
 
-        if (this.#timer > 500) { 
+        if (this.#timer > 200) { 
             this.#head.Move();
             this.#timer = 0;
         }

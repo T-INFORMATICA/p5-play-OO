@@ -1,5 +1,8 @@
 class SnakeGame extends Game { 
     #snake = null;
+    #timer = 0;
+    #currentCandy = null;
+
     constructor() { 
         super();
 
@@ -8,9 +11,17 @@ class SnakeGame extends Game {
         this.GenerateCandy();
     }
 
+    Update() { 
+        super.Update();
+
+        if (this.#currentCandy.removed) { 
+            this.GenerateCandy();
+        }
+    }
+
     GenerateCandy() { 
-        let x = Math.floor(random(0, 10)) * 20;
-        let y = Math.floor(random(0, 10)) * 20;
-        let candy = new Candy(x, y, 20);
+        let x = Math.floor(random(0, width / 20)) * 20;
+        let y = Math.floor(random(0, height / 20)) * 20;
+        this.#currentCandy = new Candy(x, y, 20);
     }
 }

@@ -52,9 +52,6 @@ class SnakeBodypart extends GameObject {
         if (other instanceof Candy) { 
             if (this.#parent == null) { 
                 other.remove();
-                let x = Math.floor(random(0, 10)) * 20;
-                let y = Math.floor(random(0, 10)) * 20;
-                let candy = new Candy(x, y, 20);
                 this.AddBodypart();
             }
         }
