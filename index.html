@@ -7,10 +7,22 @@
         <!-- external lib files -->
         <script src="https://cdn.jsdelivr.net/npm/p5@1.2.0/lib/p5.js"></script>
         <script src="lib/p5.play.js"></script>
+        <!-- p5.play.OO lib files-->
+        <script src="lib/GameCanvas.js"></script>
+        <script src="lib/GameObject.js"></script>
+        <script src="lib/Game.js"></script>
 
         <!-- your gameobject classes (inherit from GameObject) -->
+        <script src="scripts/gameobjects/Missile.js"></script>
+        <script src="scripts/gameobjects/Explosion.js"></script>
+        <script src="scripts/gameobjects/MissileSpawner.js"></script>
+        <script src="scripts/gameobjects/Gun.js"></script>
+        <script src="scripts/gameobjects/EnemyMissileSpawner.js"></script>
+        <script src="scripts/gameobjects/City.js"></script>
+        <script src="scripts/gameobjects/Cursor.js"></script>
 
         <!-- your game class (inherits from Game) -->
+        <script src="scripts/MissileCommand.js"></script>
 
         <!-- the p5 sketch (always last) -->
         <script src="sketch.js" type="module"></script>
