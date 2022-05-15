@@ -10,6 +10,8 @@ class Player extends Sprite2 {
         fill("red");
         rect(0, 0, this.Width, this.Height);
 
+        this.SetSpeed(this.Velocity.y + .4, 90);
+
         if (keyIsDown(LEFT_ARROW) === true) {
             this.AddSpeed(5, 180);
         }

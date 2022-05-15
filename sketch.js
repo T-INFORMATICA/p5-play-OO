@@ -6,5 +6,6 @@ function setup() {
 }
 
 function draw() {
+    background("lightblue");
     player.Display();
 }

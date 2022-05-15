@@ -281,6 +281,10 @@ class Sprite2 {
         this.#velocity.y = y;
     }
 
+    get Velocity() { 
+        return this.#velocity;
+    }
+
     /**
     * Calculates the scalar speed.
     *
@@ -330,11 +334,7 @@ class Sprite2 {
                 // }
             // }
         } else {
-            if (pInst._angleMode === pInst.RADIANS) {
-                a = radians(angle);
-            } else {
-                a = angle;
-            }
+            a = radians(angle);
         }
         this.#velocity.x = cos(a) * speed;
         this.#velocity.y = sin(a) * speed;
@@ -402,7 +402,7 @@ class Sprite2 {
     }
 
     AddSpeed(speed, angle) {
-        let a;
+        let a = radians(angle);
         this.#velocity.x += cos(a) * speed;
         this.#velocity.y += sin(a) * speed;
     };
@@ -733,8 +733,8 @@ class Sprite2 {
             else
                 this.#previousPosition = createVector(this.#position.x, this.#position.y);
 
-            this.#velocity.x *= 1 - this.#friction;
-            this.#velocity.y *= 1 - this.#friction;
+            // this.#velocity.x *= 1 - this.#friction;
+            // this.#velocity.y *= 1 - this.#friction;
 
             if (this.#maxSpeed !== -1)
                 this.LimitSpeed(this.#maxSpeed);
