@@ -1,27 +1,18 @@
-class CircleCollider {
-    #center;
+class CircleCollider extends Collider {
     #radius;
     #originalRadius;
-    #offset;
-    #extents;
 
     constructor(_center, _radius, _offset) {
-        this.#center = _center;
+        super(_center, createVector(_radius * 2, _radius * 2), _offset);
         this.#radius = _radius;
         this.#originalRadius = _radius;
-
-        if (_offset === undefined)
-            this.#offset = createVector(0, 0);
-        else
-            this.#offset = _offset;
-        this.#extents = createVector(_radius * 2, _radius * 2);
     }
 
     Update() {
         noFill();
         stroke(0, 255, 0);
         rectMode(CENTER);
-        ellipse(this.#center.x + this.#offset.x, this.#center.y + this.#offset.y, this.#radius * 2, this.#radius * 2);
+        ellipse(this.Center.x + this.Offset.x, this.Center.y + this.Offset.y, this.#radius * 2, this.#radius * 2);
     }
 
     //should be called only for circle vs circle
@@ -29,8 +20,8 @@ class CircleCollider {
         //square dist
         var r = this.#radius + other.radius;
         r *= r;
-        var thisCenterX = this.#center.x + this.#offset.x;
-        var thisCenterY = this.#center.y + this.#offset.y;
+        var thisCenterX = this.Center.x + this.Offset.x;
+        var thisCenterY = this.Center.y + this.Offset.y;
         var otherCenterX = other.center.x + other.offset.x;
         var otherCenterY = other.center.y + other.offset.y;
         var sqDist = pow(thisCenterX - otherCenterX, 2) + pow(thisCenterY - otherCenterY, 2);
@@ -39,9 +30,9 @@ class CircleCollider {
 
     //should be called only for circle vs circle
     Collide(other) {
-        if (this.#overlap(other)) {
-            var thisCenterX = this.#center.x + this.#offset.x;
-            var thisCenterY = this.#center.y + this.#offset.y;
+        if (this.Overlap(other)) {
+            var thisCenterX = this.Center.x + this.Offset.x;
+            var thisCenterY = this.Center.y + this.Offset.y;
             var otherCenterX = other.center.x + other.offset.x;
             var otherCenterY = other.center.y + other.offset.y;
             var a = pInst.atan2(thisCenterY - otherCenterY, thisCenterX - otherCenterX);
@@ -61,18 +52,18 @@ class CircleCollider {
     }
 
     get Left() {
-        return this.#center.x + this.#offset.x - this.#radius;
+        return this.Center.x + this.Offset.x - this.#radius;
     }
 
     get Right() {
-        return this.#center.x + this.#offset.x + this.#radius;
+        return this.Center.x + this.Offset.x + this.#radius;
     }
 
     get Top() {
-        return this.#center.y + this.#offset.y - this.#radius;
+        return this.Center.y + this.Offset.y - this.#radius;
     }
 
     get Bottom() {
-        return this.#center.y + this.#offset.y + this.#radius;
+        return this.Center.y + this.Offset.y + this.#radius;
     }
 }

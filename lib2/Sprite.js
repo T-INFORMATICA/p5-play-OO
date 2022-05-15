@@ -242,14 +242,18 @@ class Sprite2 {
         this.#previousPosition = createVector(x, y);
         this.#newPosition = createVector(x, y);
 
-        this.#width = width;
-        this.#height = height;
+        this.Width = width;
+        this.Height = height;
         this.#internalWidth = width;
         this.#internalHeight = height;
         this.#originalWidth = this.#internalWidth;
         this.#originalHeight = this.#internalHeight;
 
         this.#velocity = createVector(0, 0);
+    }
+
+    set Debug(value) {
+        this.#debug = value;
     }
 
     set Depth(value) {
@@ -287,6 +291,10 @@ class Sprite2 {
         return this.#velocity.mag();
     };
 
+    get Position() { 
+        return this.#position;
+    }
+
     get Direction() {
         let direction = atan2(this.#velocity.y, this.#velocity.x);
 
@@ -313,13 +321,14 @@ class Sprite2 {
         if (typeof angle === 'undefined') {
             if (this.#velocity.x !== 0 || this.#velocity.y !== 0) {
                 a = pInst.atan2(this.#velocity.y, this.#velocity.x);
-            } else {
-                if (pInst._angleMode === pInst.RADIANS) {
-                    a = radians(this.#_rotation);
-                } else {
-                    a = this.#_rotation;
-                }
             }
+            // else {
+                // if (pInst._angleMode === pInst.RADIANS) {
+                //     a = radians(this.#rotation);
+                // } else {
+                //     a = this.#rotation;
+                // }
+            // }
         } else {
             if (pInst._angleMode === pInst.RADIANS) {
                 a = radians(angle);
@@ -345,7 +354,7 @@ class Sprite2 {
             this.SetDefaultCollider();
 
         if (this.#collider !== undefined) {
-            if (this.#collider instanceof AABB)
+            if (this.#collider instanceof AABBCollider)
                 return (
                     point.x > this.#collider.left() &&
                     point.x < this.#collider.right() &&
@@ -462,10 +471,10 @@ class Sprite2 {
                 let other = others[i];
 
                 if (this.#collider === undefined)
-                    this.#setDefaultCollider();
+                    this.SetDefaultCollider();
 
                 if (other.#collider === undefined)
-                    other.#setDefaultCollider();
+                    other.SetDefaultCollider();
 
                 /*
                 if(this.#colliderType=="default" && animations[currentAnimation]!=null)
@@ -517,7 +526,7 @@ class Sprite2 {
                                 abs(this.#position.x - this.#previousPosition.x) + this.#collider.extents.x,
                                 abs(this.#position.y - this.#previousPosition.y) + this.#collider.extents.y);
 
-                            let bbox = new AABB(pInst, c, e, this.#collider.offset);
+                            let bbox = new AABBCollider(pInst, c, e, this.#collider.offset);
 
                             //bbox.draw();
 
@@ -712,7 +721,7 @@ class Sprite2 {
     Update() {
         noStroke();
         fill(this.#shapeColor);
-        rect(0, 0, this.#_internalWidth, this.#_internalHeight);
+        rect(0, 0, this.#internalWidth, this.#internalHeight);
     }
 
     #PreUpdate() {
@@ -728,9 +737,9 @@ class Sprite2 {
             this.#velocity.y *= 1 - this.#friction;
 
             if (this.#maxSpeed !== -1)
-                this.#limitSpeed(this.#maxSpeed);
+                this.LimitSpeed(this.#maxSpeed);
 
-            this.#rotation += this.#rotationSpeed;
+            // this.#rotation += this.#rotationSpeed;
 
             this.#position.x += this.#velocity.x;
             this.#position.y += this.#velocity.y;
@@ -751,26 +760,26 @@ class Sprite2 {
     SetDefaultCollider() {
         //if has animation get the animation bounding box
         //working only for preloaded images
-        if (animations[currentAnimation] && (animations[currentAnimation].getWidth() !== 1 && animations[currentAnimation].getHeight() !== 1)) {
-            this.#collider = this.#getBoundingBox();
-            this.#_internalWidth = animations[currentAnimation].getWidth() * abs(this.#_getScaleX());
-            this.#_internalHeight = animations[currentAnimation].getHeight() * abs(this.#_getScaleY());
-            //quadTree.insert(this.#;
-            this.#colliderType = 'image';
-            //print("IMAGE COLLIDER ADDED");
-        }
-        else if (animations[currentAnimation] && animations[currentAnimation].getWidth() === 1 && animations[currentAnimation].getHeight() === 1) {
-            //animation is still loading
-            //print("wait");
-        }
-        else //get the with and height defined at the creation
-        {
-            this.#collider = new AABB(pInst, this.#position, createVector(this.#_internalWidth, this.#_internalHeight));
+        // if (animations[currentAnimation] && (animations[currentAnimation].getWidth() !== 1 && animations[currentAnimation].getHeight() !== 1)) {
+        //     this.#collider = this.GetBoundingBox();
+        //     // this.#internalWidth = animations[currentAnimation].getWidth() * abs(this.GetScaleX());
+        //     // this.#internalHeight = animations[currentAnimation].getHeight() * abs(this.GetScaleY());
+        //     //quadTree.insert(this.#;
+        //     this.#colliderType = 'image';
+        //     //print("IMAGE COLLIDER ADDED");
+        // }
+        // else if (animations[currentAnimation] && animations[currentAnimation].getWidth() === 1 && animations[currentAnimation].getHeight() === 1) {
+        //     //animation is still loading
+        //     //print("wait");
+        // }
+        // else //get the with and height defined at the creation
+        // {
+            this.#collider = new AABBCollider(this.#position, createVector(this.#internalWidth, this.#internalHeight));
             //quadTree.insert(this.#;
             this.#colliderType = 'default';
-        }
+        // }
 
-        pInst.quadTree.insert(this);
+        // pInst.quadTree.insert(this);
     }
 
     /**
@@ -822,11 +831,11 @@ class Sprite2 {
 
         let v = createVector(offsetX, offsetY);
         if (type === 'rectangle' && arguments.length === 1) {
-            this.#collider = new AABB(pInst, this.#position, createVector(this.#width, this.#height));
+            this.#collider = new AABBCollider(pInst, this.#position, createVector(this.Width, this.Height));
         } else if (type === 'rectangle' && arguments.length >= 5) {
-            this.#collider = new AABB(pInst, this.#position, createVector(width, height), v);
+            this.#collider = new AABBCollider(pInst, this.#position, createVector(width, height), v);
         } else if (type === 'circle' && arguments.length === 1) {
-            this.#collider = new CircleCollider(pInst, this.#position, Math.floor(Math.max(this.#width, this.#height) / 2));
+            this.#collider = new CircleCollider(pInst, this.#position, Math.floor(Math.max(this.Width, this.Height) / 2));
         } else if (type === 'circle' && arguments.length >= 4) {
             this.#collider = new CircleCollider(pInst, this.#position, width, v);
         }
@@ -835,21 +844,24 @@ class Sprite2 {
     }
 
     get BoundingBox() {
-        let w = animations[currentAnimation].getWidth() * abs(this.#_getScaleX());
-        let h = animations[currentAnimation].getHeight() * abs(this.#_getScaleY());
+        let w = this.Width;
+        let h = this.Height;
+        // let w = animations[currentAnimation].getWidth() * abs(this.GetScaleX());
+        // let h = animations[currentAnimation].getHeight() * abs(this.GetScaleY());
 
         //if the bounding box is 1x1 the image is not loaded
         //potential issue with actual 1x1 images
         if (w === 1 && h === 1) {
             //not loaded yet
-            return new AABB(pInst, this.#position, createVector(w, h));
+            return new AABBCollider(pInst, this.#position, createVector(w, h));
         }
         else {
-            return new AABB(pInst, this.#position, createVector(w, h));
+            return new AABBCollider(pInst, this.#position, createVector(w, h));
         }
     }
 
-    #Display() {
+    Display() {
+        this.#PreUpdate();
         if (this.#visible && !this.#removed) {
             push();
             colorMode(RGB);
@@ -860,17 +872,17 @@ class Sprite2 {
             imageMode(CENTER);
 
             translate(this.#position.x, this.#position.y);
-            scale(this.#_getScaleX() * dirX, this.#_getScaleY() * dirY);
-            if (pInst._angleMode === pInst.RADIANS) {
-                rotate(radians(this.#rotation));
-            } else {
-                rotate(this.#rotation);
-            }
-            this.#draw();
+            // scale(this.GetScaleX() * dirX, this.GetScaleY() * dirY);
+            // if (pInst._angleMode === pInst.RADIANS) {
+            //     rotate(radians(this.#rotation));
+            // } else {
+            //     rotate(this.#rotation);
+            // }
+            this.Update();
             //draw debug info
             pop();
 
-            this.#_drawnWithCamera = camera.active;
+            // this.#drawnWithCamera = camera.active;
 
             if (this.#debug) {
                 push();
@@ -893,7 +905,7 @@ class Sprite2 {
 
                 //bounding box
                 if (this.#collider !== undefined) {
-                    this.#collider.draw();
+                    this.#collider.Update();
                 }
                 pop();
             }
