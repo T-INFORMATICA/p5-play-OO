@@ -15,10 +15,10 @@ class AABBCollider extends Collider {
         if (other instanceof AABBCollider) {
             var md = other.MinkowskiDifference(this);
 
-            if (md.min().x <= 0 &&
-                md.max().x >= 0 &&
-                md.min().y <= 0 &&
-                md.max().y >= 0) {
+            if (md.Min.x <= 0 &&
+                md.Max.x >= 0 &&
+                md.Min.y <= 0 &&
+                md.Max.y >= 0) {
                 return true;
             }
             else
@@ -52,11 +52,11 @@ class AABBCollider extends Collider {
         if (other instanceof AABBCollider) {
             var md = other.MinkowskiDifference(this);
 
-            if (md.min().x <= 0 &&
-                md.max().x >= 0 &&
-                md.min().y <= 0 &&
-                md.max().y >= 0) {
-                var boundsPoint = md.closestPointOnBoundsToPoint(createVector(0, 0));
+            if (md.Min.x <= 0 &&
+                md.Max.x >= 0 &&
+                md.Min.y <= 0 &&
+                md.Max.y >= 0) {
+                var boundsPoint = md.ClosestPointOnBoundsToPoint(createVector(0, 0));
 
                 return boundsPoint;
             }
@@ -134,8 +134,8 @@ class AABBCollider extends Collider {
     }
 
     MinkowskiDifference(other) {
-        var topLeft = this.Min.sub(other.max());
-        var fullSize = this.size().add(other.size());
+        var topLeft = this.Min.sub(other.Max);
+        var fullSize = this.Size.add(other.Size);
         return new AABBCollider(topLeft.add(fullSize.div(2)), fullSize.div(2));
     }
 
@@ -145,14 +145,14 @@ class AABBCollider extends Collider {
         var minDist = abs(point.x - this.Min.x);
         var boundsPoint = createVector(this.Min.x, point.y);
 
-        if (abs(this.max().x - point.x) < minDist) {
-            minDist = abs(this.max().x - point.x);
-            boundsPoint = createVector(this.max().x, point.y);
+        if (abs(this.Max.x - point.x) < minDist) {
+            minDist = abs(this.Max.x - point.x);
+            boundsPoint = createVector(this.Max.x, point.y);
         }
 
-        if (abs(this.max().y - point.y) < minDist) {
-            minDist = abs(this.max().y - point.y);
-            boundsPoint = createVector(point.x, this.max().y);
+        if (abs(this.Max.y - point.y) < minDist) {
+            minDist = abs(this.Max.y - point.y);
+            boundsPoint = createVector(point.x, this.Max.y);
         }
 
         if (abs(this.Min.y - point.y) < minDist) {

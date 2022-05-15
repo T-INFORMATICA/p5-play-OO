@@ -434,7 +434,7 @@ class Sprite2 {
     * @param {Function} [callback] The function to be called if overlap is positive
     * @return {Boolean} True if overlapping
     */
-    #Collide(target, callback) {
+    Collide(target, callback) {
         //if(this.#collider instanceof AABB && target.collider instanceof AABB)
         return this.#AABBops('collide', target, callback);
     };
@@ -451,7 +451,7 @@ class Sprite2 {
         //if single sprite turn into array anyway
         let others = [];
 
-        if (target instanceof Sprite)
+        if (target instanceof Sprite2)
             others.push(target);
         else if (target instanceof Array) {
             if (quadTree !== undefined && quadTree.active)
@@ -505,9 +505,9 @@ class Sprite2 {
 
                         //if the sum of the speed is more than the collider i may
                         //have a tunnelling problem
-                        let tunnelX = abs(this.#velocity.x - other.#velocity.x) >= other.#collider.extents.x / 2 && round(this.#deltaX - this.#velocity.x) === 0;
+                        let tunnelX = abs(this.#velocity.x - other.#velocity.x) >= other.#collider.Extents.x / 2 && round(this.#deltaX - this.#velocity.x) === 0;
 
-                        let tunnelY = abs(this.#velocity.y - other.#velocity.y) >= other.#collider.size().y / 2 && round(this.#deltaY - this.#velocity.y) === 0;
+                        let tunnelY = abs(this.#velocity.y - other.#velocity.y) >= other.#collider.Size.y / 2 && round(this.#deltaY - this.#velocity.y) === 0;
 
 
                         if (tunnelX || tunnelY) {
@@ -523,14 +523,14 @@ class Sprite2 {
                             //the extents are the distance between the coll centers
                             //plus the extents of both
                             let e = createVector(
-                                abs(this.#position.x - this.#previousPosition.x) + this.#collider.extents.x,
-                                abs(this.#position.y - this.#previousPosition.y) + this.#collider.extents.y);
+                                abs(this.#position.x - this.#previousPosition.x) + this.#collider.Extents.x,
+                                abs(this.#position.y - this.#previousPosition.y) + this.#collider.Extents.y);
 
-                            let bbox = new AABBCollider(pInst, c, e, this.#collider.offset);
+                            let bbox = new AABBCollider(c, e, this.#collider.offset);
 
                             //bbox.draw();
 
-                            if (bbox.overlap(other.#collider)) {
+                            if (bbox.Overlap(other.#collider)) {
                                 if (tunnelX) {
 
                                     //entering from the right
@@ -543,9 +543,9 @@ class Sprite2 {
                                 if (tunnelY) {
                                     //from top
                                     if (this.#velocity.y > 0)
-                                        displacement.y = other.#collider.top() - this.#collider.bottom() - 1;
+                                        displacement.y = other.#collider.Top - this.#collider.Bottom - 1;
                                     else if (this.#velocity.y < 0)
-                                        displacement.y = other.#collider.bottom() - this.#collider.top() + 1;
+                                        displacement.y = other.#collider.Bottom - this.#collider.Top + 1;
 
                                 }
 
@@ -558,10 +558,10 @@ class Sprite2 {
                             //if the other is a circle I calculate the displacement from here
                             //and reverse it
                             if (this.#collider instanceof CircleCollider) {
-                                displacement = other.#collider.collide(this.#collider).mult(-1);
+                                displacement = other.#collider.Collide(this.#collider).mult(-1);
                             }
                             else
-                                displacement = this.#collider.collide(other.#collider);
+                                displacement = this.#collider.Collide(other.#collider);
 
                         }
 

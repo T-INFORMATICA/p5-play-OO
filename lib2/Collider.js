@@ -19,6 +19,11 @@ class Collider {
     {
       return this.#center;
     }
+  
+    get Extents()
+    {
+      return this.#extents;
+    }
 
     get Offset() { 
         return this.#offset;
