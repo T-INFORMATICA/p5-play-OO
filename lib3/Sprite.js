@@ -1,14 +1,23 @@
 class Sprite3 {
+    #width = 100;
+    #height = 100;
+
     #position;
     #previousPosition;
     #newPosition;
-    #deltaX = 0;
-    #deltaY = 0;
+    #deltaPosition;
     
     #depth = 0;
+    #life = -1;
+    #visible = true;
+    #debug = false;
+    #removed = false;
+    #shapeColor = color(random(255), random(255), random(255));
+    #groups = [];
+
     #velocity;
     #maxSpeed = -1;
-
+    #immovable = false;
     #collider = undefined;
 
     #touching = {
@@ -18,24 +27,11 @@ class Sprite3 {
         bottom: false
     };
 
-    #immovable = false;
-
-    #visible = true;
-
-    #width;
-
-    #height;
-
-    #removed = false;
-    #life = -1;
-    #debug = false;
-    #shapeColor = color(random(255), random(255), random(255));
-    #groups = [];
-
     constructor(x, y, width, height) {
         this.#position = createVector(x, y);
         this.#previousPosition = createVector(x, y);
         this.#newPosition = createVector(x, y);
+        this.#deltaPosition = createVector(0, 0);
 
         this.Width = width;
         this.Height = height;
@@ -69,9 +65,9 @@ class Sprite3 {
         this.#height = value;
     }
 
-    SetVelocity(x, y) {
-        this.#velocity.x = x;
-        this.#velocity.y = y;
+    set Velocity(value) {
+        this.#velocity.x = value.x;
+        this.#velocity.y = value.y;
     }
 
     get Velocity() { 
@@ -111,38 +107,6 @@ class Sprite3 {
         let a = radians(angle);
         this.#velocity.x = cos(a) * speed;
         this.#velocity.y = sin(a) * speed;
-    }
-
-
-    SetAttractionPoint(magnitude, pointX, pointY) {
-        let angle = atan2(pointY - this.#position.y, pointX - this.#position.x);
-        this.#velocity.x += cos(angle) * magnitude;
-        this.#velocity.y += sin(angle) * magnitude;
-    };
-
-    OverlapPoint(pointX, pointY) {
-        let point = createVector(pointX, pointY);
-
-        if (!this.#collider)
-            this.SetDefaultCollider();
-
-        if (this.#collider !== undefined) {
-            if (this.#collider instanceof AABBCollider)
-                return (
-                    point.x > this.#collider.left() &&
-                    point.x < this.#collider.right() &&
-                    point.y > this.#collider.top() &&
-                    point.y < this.#collider.bottom());
-            if (this.#collider instanceof CircleCollider) {
-                let sqRadius = this.#collider.radius * this.#collider.radius;
-                let sqDist = pow(this.#collider.center.x - point.x, 2) + pow(this.#collider.center.y - point.y, 2);
-                return sqDist < sqRadius;
-            }
-            else
-                return false;
-        }
-        else
-            return false;
     }
 
     AddSpeed(speed, angle) {
@@ -240,13 +204,6 @@ class Sprite3 {
         return result;
     }
 
-    AddToGroup(group) {
-        if (group instanceof Array)
-            group.add(this);
-        else
-            print('addToGroup error: ' + group + ' is not a group');
-    };
-
     Remove() {
         this.#removed = true;
 
@@ -279,8 +236,8 @@ class Sprite3 {
 
             this.#newPosition = createVector(this.#position.x, this.#position.y);
 
-            this.#deltaX = this.#position.x - this.#previousPosition.x;
-            this.#deltaY = this.#position.y - this.#previousPosition.y;
+            this.#deltaPosition.x = this.#position.x - this.#previousPosition.x;
+            this.#deltaPosition.y = this.#position.y - this.#previousPosition.y;
 
             //self destruction countdown
             if (this.#life > 0)
@@ -308,35 +265,32 @@ class Sprite3 {
 
             translate(this.#position.x, this.#position.y);
             this.Update();
-            //draw debug info
             pop();
 
+            //draw debug info
             if (this.#debug) {
-                push();
-                let ctx = Document.querySelector("canvas")[0].getContext("2d");
-                ctx.fillRect(25, 25, 100, 100);
-                //draw the anchor point
-                stroke(0, 255, 0);
-                strokeWeight(1);
-                line(this.#position.x - 10, this.#position.y, this.#position.x + 10, this.#position.y);
-                line(this.#position.x, this.#position.y - 10, this.#position.x, this.#position.y + 10);
-                noFill();
+                let ctx = document.querySelector("canvas").getContext("2d");
+                ctx.save();
 
-                //depth number
-                noStroke();
-                fill(0, 255, 0);
-                textAlign(LEFT, BOTTOM);
-                textSize(16);
-                text(this.#depth + '', this.#position.x + 4, this.#position.y - 2);
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = "#00FF00";
+                ctx.strokeRect(this.Position.x - this.Width / 2, this.Position.y - this.Height / 2, this.Width, this.Height);
 
-                noFill();
-                stroke(0, 255, 0);
+                ctx.beginPath();
+                ctx.moveTo(this.Position.x - 10, this.Position.y);
+                ctx.lineTo(this.Position.x + 10, this.Position.y);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(this.Position.x, this.Position.y - 10);
+                ctx.lineTo(this.Position.x, this.Position.y + 10);
+                ctx.stroke();
 
-                //bounding box
-                if (this.#collider !== undefined) {
-                    this.#collider.Update();
-                }
-                pop();
+                ctx.fillStyle = "#00FF00";
+                ctx.font = '16px sans-serif';
+                ctx.fillText(this.#depth + '', this.Position.x + 4, this.Position.y - 2);
+
+                ctx.restore();
             }
 
         }
