@@ -1,6 +1,6 @@
-class TileFloor extends Sprite2 { 
+class TileWall extends Sprite2 { 
     constructor(x, y, size) { 
-        super(x, y - size / 4, size, size/2);
+        super(x, y, size, size);
         this.Debug = true;
         this.SetDefaultCollider();
     }

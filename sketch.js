@@ -4,7 +4,16 @@ let floors = [];
 function setup() {
     createCanvas(800, 400);
     player = new Player(100, 100, 50);
-    floors.push(new TileFloor(100, 200, 50));
+
+    for (let x = 0; x < 12; ++x) { 
+        floors.push(new TileFloor(50 * x, 400, 50));
+    }
+
+    let y = 3;
+    for (; y > 0; --y) { 
+        floors.push(new TileWall(400, 400 - (50 * y), 50));
+    }
+    floors.push(new TileFloor(400, 425 - (50 * 4), 50));
 }
 
 function draw() {
@@ -12,15 +21,5 @@ function draw() {
     player.Display();
     floors.forEach(f => f.Display());
 
-    floors.forEach(f => player.Collide(f, (player, other) => {
-        if (other instanceof TileFloor) {
-            // if (this.#jumped === false) {
-            //     this.#jumpsLeft = 1;
-            // }
-
-            if (player.Velocity.y > 0) {
-                player.Velocity.y = 0;
-            }
-        }
-    }));
+    floors.forEach(f => player.Collide(f));
 }

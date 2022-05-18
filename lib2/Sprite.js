@@ -393,13 +393,18 @@ class Sprite2 {
     *
     * @method overlap
     * @param {Object} target Sprite or group to check against the current one
-    * @param {Function} [callback] The function to be called if overlap is positive
     * @return {Boolean} True if overlapping
     */
-    Overlap(target, callback) {
+    Overlap(target) {
         //if(this.#collider instanceof AABB && target.collider instanceof AABB)
-        return this.#AABBops('overlap', target, callback);
+        let result = false;
+        result = this.#AABBops('overlap', target);
+        if (result)
+            this.OnOverlap(target);
+        return result;
     }
+
+    OnOverlap(other) { }
 
     AddSpeed(speed, angle) {
         let a = radians(angle);
@@ -434,10 +439,16 @@ class Sprite2 {
     * @param {Function} [callback] The function to be called if overlap is positive
     * @return {Boolean} True if overlapping
     */
-    Collide(target, callback) {
+    Collide(target) {
         //if(this.#collider instanceof AABB && target.collider instanceof AABB)
-        return this.#AABBops('collide', target, callback);
-    };
+        let result = false;
+        result = this.#AABBops('collide', target);
+        if (result)
+            this.OnCollide(target);
+        return result;
+    }
+
+    OnCollide(other) { }
 
     #AABBops(type, target, callback) {
 
@@ -496,8 +507,8 @@ class Sprite2 {
 
                             result = true;
 
-                            if (callback !== undefined && typeof callback === 'function')
-                                callback.call(this, this, other);
+                            // if (callback !== undefined && typeof callback === 'function')
+                            //     callback.call(this, this, other);
                         }
                     }
                     else if (type === 'collide' || type === 'displace' || type === 'bounce') {
@@ -651,8 +662,8 @@ class Sprite2 {
                             //else if(type == "collide")
                             //this.#velocity = createVector(0,0);
 
-                            if (callback !== undefined && typeof callback === 'function')
-                                callback.call(this, this, other);
+                            // if (callback !== undefined && typeof callback === 'function')
+                            //     callback.call(this, this, other);
 
                             result = true;
                         }
@@ -687,12 +698,17 @@ class Sprite2 {
     *
     * @method bounce
     * @param {Object} target Sprite or group to check against the current one
-    * @param {Function} [callback] The function to be called if overlap is positive
     * @return {Boolean} True if overlapping
     */
-    Bounce(target, callback) {
-        return this.#AABBops('bounce', target, callback);
-    };
+    Bounce(target) {
+        let result = false;
+        result = this.#AABBops('bounce', target);
+        if (result)
+            this.OnBounce(target);
+        return result;
+    }
+
+    OnBounce(other) { }
 
     /**
     * Adds the sprite to an existing group
