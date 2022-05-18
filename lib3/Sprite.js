@@ -11,7 +11,6 @@ class Sprite3 {
 
     #collider = undefined;
 
-    #colliderType = 'none';
     #touching = {
         left: false,
         right: false,
@@ -19,16 +18,13 @@ class Sprite3 {
         bottom: false
     };
 
-    #mass = 1;
-
     #immovable = false;
 
-    #restitution = 1;
     #visible = true;
 
-    #internalWidth;
+    #width;
 
-    #internalHeight;
+    #height;
 
     #removed = false;
     #life = -1;
@@ -43,10 +39,8 @@ class Sprite3 {
 
         this.Width = width;
         this.Height = height;
-        this.#internalWidth = width;
-        this.#internalHeight = height;
-        this.#originalWidth = this.#internalWidth;
-        this.#originalHeight = this.#internalHeight;
+        this.#width = width;
+        this.#height = height;
 
         this.#velocity = createVector(0, 0);
     }
@@ -60,19 +54,19 @@ class Sprite3 {
     }
 
     get Width() {
-        return this.#internalWidth;
+        return this.#width;
     }
 
     set Width(value) {
-        this.#internalWidth = value;
+        this.#width = value;
     }
 
     get Height() {
-        return this.#internalHeight;
+        return this.#height;
     }
 
     set Height(value) {
-        this.#internalHeight = value;
+        this.#height = value;
     }
 
     SetVelocity(x, y) {
@@ -84,12 +78,6 @@ class Sprite3 {
         return this.#velocity;
     }
 
-    /**
-    * Calculates the scalar speed.
-    *
-    * @method getSpeed
-    * @return {Number} Scalar speed
-    */
     get Speed() {
         return this.#velocity.mag();
     };
@@ -219,79 +207,16 @@ class Sprite3 {
 
                 if (this.#collider !== undefined && other.#collider !== undefined) {
                     if (type === 'overlap') {
-                        let over;
-
-                        //if the other is a circle I calculate the displacement from here
-                        if (this.#collider instanceof CircleCollider)
-                            over = other.#collider.overlap(this.#collider);
-                        else
-                            over = this.#collider.overlap(other.#collider);
-
+                        let over = this.#collider.overlap(other.#collider);
                         if (over) {
                             result = true;
                         }
                     }
-                    else if (type === 'collide' || type === 'displace') {
-                        displacement = createVector(0, 0);
-
-                        //if the sum of the speed is more than the collider i may
-                        //have a tunnelling problem
-                        let tunnelX = abs(this.#velocity.x - other.#velocity.x) >= other.#collider.Extents.x / 2 && round(this.#deltaX - this.#velocity.x) === 0;
-
-                        let tunnelY = abs(this.#velocity.y - other.#velocity.y) >= other.#collider.Size.y / 2 && round(this.#deltaY - this.#velocity.y) === 0;
-
-                        if (tunnelX || tunnelY) {
-                            //instead of using the colliders I use the bounding box
-                            //around the previous position and current position
-                            //this is regardless of the collider type
-
-                            //the center is the average of the coll centers
-                            let c = createVector(
-                                (this.#position.x + this.#previousPosition.x) / 2,
-                                (this.#position.y + this.#previousPosition.y) / 2);
-
-                            //the extents are the distance between the coll centers
-                            //plus the extents of both
-                            let e = createVector(
-                                abs(this.#position.x - this.#previousPosition.x) + this.#collider.Extents.x,
-                                abs(this.#position.y - this.#previousPosition.y) + this.#collider.Extents.y);
-
-                            let bbox = new AABBCollider(c, e, this.#collider.offset);
-
-                            if (bbox.Overlap(other.#collider)) {
-                                if (tunnelX) {
-                                    //entering from the right
-                                    if (this.#velocity.x < 0)
-                                        displacement.x = other.#collider.right() - this.#collider.left() + 1;
-                                    else if (this.#velocity.x > 0)
-                                        displacement.x = other.#collider.left() - this.#collider.right() - 1;
-                                }
-                                if (tunnelY) {
-                                    //from top
-                                    if (this.#velocity.y > 0)
-                                        displacement.y = other.#collider.Top - this.#collider.Bottom - 1;
-                                    else if (this.#velocity.y < 0)
-                                        displacement.y = other.#collider.Bottom - this.#collider.Top + 1;
-
-                                }
-
-                            }
-                        }
-                        else {
-                            //if the other is a circle I calculate the displacement from here
-                            //and reverse it
-                            if (this.#collider instanceof CircleCollider) {
-                                displacement = other.#collider.Collide(this.#collider).mult(-1);
-                            }
-                            else
-                                displacement = this.#collider.Collide(other.#collider);
-
-                        }
+                    else if (type === 'collide') {
+                        displacement = this.#collider.Collide(other.#collider);
 
                         if (displacement.x !== 0 || displacement.y !== 0) {
-                            if (type === 'displace' && !other.#immovable) {
-                                other.#position.sub(displacement);
-                            } else if ((type === 'collide') && !this.#immovable) {
+                            if ((type === 'collide') && !this.#immovable) {
                                 this.#position.add(displacement);
                                 this.#previousPosition = createVector(this.#position.x, this.#position.y);
                                 this.#newPosition = createVector(this.#position.x, this.#position.y);
@@ -334,7 +259,7 @@ class Sprite3 {
     Update() {
         noStroke();
         fill(this.#shapeColor);
-        rect(0, 0, this.#internalWidth, this.#internalHeight);
+        rect(0, 0, this.#width, this.#height);
     }
 
     #PreUpdate() {
@@ -346,13 +271,8 @@ class Sprite3 {
             else
                 this.#previousPosition = createVector(this.#position.x, this.#position.y);
 
-            // this.#velocity.x *= 1 - this.#friction;
-            // this.#velocity.y *= 1 - this.#friction;
-
             if (this.#maxSpeed !== -1)
                 this.LimitSpeed(this.#maxSpeed);
-
-            // this.#rotation += this.#rotationSpeed;
 
             this.#position.x += this.#velocity.x;
             this.#position.y += this.#velocity.y;
@@ -371,53 +291,13 @@ class Sprite3 {
     }
 
     SetDefaultCollider() {
-        this.#collider = new AABBCollider(this.#position, createVector(this.#internalWidth, this.#internalHeight));
-        this.#colliderType = 'default';
-    }
-
-    SetCollider(type, offsetX, offsetY, width, height) {
-        if (!(type === 'rectangle' || type === 'circle')) {
-            throw new TypeError('setCollider expects the first argument to be either "circle" or "rectangle"');
-        } else if (type === 'circle' && arguments.length > 1 && arguments.length < 4) {
-            throw new TypeError('Usage: setCollider("circle") or setCollider("circle", offsetX, offsetY, radius)');
-        } else if (type === 'circle' && arguments.length > 4) {
-            pInst._warn('Extra parameters to setCollider were ignored. Usage: setCollider("circle") or setCollider("circle", offsetX, offsetY, radius)');
-        } else if (type === 'rectangle' && arguments.length > 1 && arguments.length < 5) {
-            throw new TypeError('Usage: setCollider("rectangle") or setCollider("rectangle", offsetX, offsetY, width, height)');
-        } else if (type === 'rectangle' && arguments.length > 5) {
-            pInst._warn('Extra parameters to setCollider were ignored. Usage: setCollider("rectangle") or setCollider("rectangle", offsetX, offsetY, width, height)');
-        }
-
-        this.#colliderType = 'custom';
-
-        let v = createVector(offsetX, offsetY);
-        if (type === 'rectangle' && arguments.length === 1) {
-            this.#collider = new AABBCollider(pInst, this.#position, createVector(this.Width, this.Height));
-        } else if (type === 'rectangle' && arguments.length >= 5) {
-            this.#collider = new AABBCollider(pInst, this.#position, createVector(width, height), v);
-        } else if (type === 'circle' && arguments.length === 1) {
-            this.#collider = new CircleCollider(pInst, this.#position, Math.floor(Math.max(this.Width, this.Height) / 2));
-        } else if (type === 'circle' && arguments.length >= 4) {
-            this.#collider = new CircleCollider(pInst, this.#position, width, v);
-        }
-    }
-
-    get BoundingBox() {
-        let w = this.Width;
-        let h = this.Height;
-
-        if (w === 1 && h === 1) {
-            //not loaded yet
-            return new AABBCollider(pInst, this.#position, createVector(w, h));
-        }
-        else {
-            return new AABBCollider(pInst, this.#position, createVector(w, h));
-        }
+        this.#collider = new AABBCollider(this.#position, createVector(this.#width, this.#height));
     }
 
     Display() {
-        this.#PreUpdate();
         if (this.#visible && !this.#removed) {
+            this.#PreUpdate();
+
             push();
             colorMode(RGB);
 
@@ -433,6 +313,8 @@ class Sprite3 {
 
             if (this.#debug) {
                 push();
+                let ctx = Document.querySelector("canvas")[0].getContext("2d");
+                ctx.fillRect(25, 25, 100, 100);
                 //draw the anchor point
                 stroke(0, 255, 0);
                 strokeWeight(1);

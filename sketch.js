@@ -2,7 +2,7 @@ let player = null;
 let floors = [];
 
 function setup() {
-    createCanvas(800, 400);
+    createCanvas(400, 400);
     player = new Player(100, 100, 50);
 
     for (let x = 0; x < 12; ++x) { 
@@ -11,9 +11,9 @@ function setup() {
 
     let y = 3;
     for (; y > 0; --y) { 
-        floors.push(new TileWall(400, 400 - (50 * y), 50));
+        floors.push(new TileWall(300, 400 - (50 * y), 50));
     }
-    floors.push(new TileFloor(400, 425 - (50 * 4), 50));
+    floors.push(new TileFloor(300, 425 - (50 * 4), 50));
 }
 
 function draw() {
