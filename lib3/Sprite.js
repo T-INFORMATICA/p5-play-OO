@@ -1,4 +1,4 @@
-class Sprite3 {
+class GameObject {
     #width = 100;
     #height = 100;
 
@@ -6,26 +6,18 @@ class Sprite3 {
     #previousPosition;
     #newPosition;
     #deltaPosition;
-    
+
     #depth = 0;
     #life = -1;
     #visible = true;
     #debug = false;
     #removed = false;
-    #shapeColor = color(random(255), random(255), random(255));
     #groups = [];
 
     #velocity;
     #maxSpeed = -1;
     #immovable = false;
     #collider = undefined;
-
-    #touching = {
-        left: false,
-        right: false,
-        top: false,
-        bottom: false
-    };
 
     constructor(x, y, width, height) {
         this.#position = createVector(x, y);
@@ -70,15 +62,19 @@ class Sprite3 {
         this.#velocity.y = value.y;
     }
 
-    get Velocity() { 
+    get Velocity() {
         return this.#velocity;
     }
 
     get Speed() {
         return this.#velocity.mag();
-    };
+    }
 
-    get Position() { 
+    set Position(value) {
+        this.#position = value;
+    }
+
+    get Position() {
         return this.#position;
     }
 
@@ -89,6 +85,12 @@ class Sprite3 {
             direction = 0;
 
         return direction;
+    }
+
+    Displace(displacement) {
+        this.#position.add(displacement);
+        this.#previousPosition = createVector(this.#position.x, this.#position.y);
+        this.#newPosition = createVector(this.#position.x, this.#position.y);
     }
 
     LimitSpeed(max) {
@@ -115,94 +117,27 @@ class Sprite3 {
         this.#velocity.y += sin(a) * speed;
     };
 
-    Overlap(target) {
-        let result = false;
-        result = this.#AABBops('overlap', target);
-        if (result)
-            this.OnOverlap(target);
-        return result;
+    SetDefaultCollider() {
+        this.#collider = new AABBCollider(this, this.#position, createVector(this.Width, this.Height));
     }
 
-    OnOverlap(other) { }
-
-    Collide(target) {
-        let result = false;
-        result = this.#AABBops('collide', target);
-        if (result)
-            this.OnCollide(target);
-        return result;
+    Overlap(...otherSprites) {
+        let spritesHit = this.#collider.Hit(true, otherSprites.map(sprite => sprite.#collider)); // the collider hit function needs an array of colliders, not sprites
+        if (spritesHit.length > 0)
+            this.OnOverlap(spritesHit);
+        return spritesHit.length > 0;
     }
 
-    OnCollide(other) { }
+    OnOverlap(spritesHit) { }
 
-    #AABBops(type, target) {
-        this.#touching.left = false;
-        this.#touching.right = false;
-        this.#touching.top = false;
-        this.#touching.bottom = false;
-
-        let result = false;
-
-        let others = [];
-
-        if (target instanceof Sprite3) {
-            others.push(target);
-        }
-        else if (target instanceof Array) {
-            if (others.length === 0) {
-                others = target;
-            }
-        }
-        else {
-            throw ('Error: overlap can only be checked between sprites or groups');
-        }
-
-        for (let i = 0; i < others.length; i++) {
-            if (this !== others[i] && !this.#removed) //you can check collisions within the same group but not on itself
-            {
-                let displacement;
-                let other = others[i];
-
-                if (this.#collider === undefined)
-                    this.SetDefaultCollider();
-
-                if (other.#collider === undefined)
-                    other.SetDefaultCollider();
-
-                if (this.#collider !== undefined && other.#collider !== undefined) {
-                    if (type === 'overlap') {
-                        let over = this.#collider.overlap(other.#collider);
-                        if (over) {
-                            result = true;
-                        }
-                    }
-                    else if (type === 'collide') {
-                        displacement = this.#collider.Collide(other.#collider);
-
-                        if (displacement.x !== 0 || displacement.y !== 0) {
-                            if ((type === 'collide') && !this.#immovable) {
-                                this.#position.add(displacement);
-                                this.#previousPosition = createVector(this.#position.x, this.#position.y);
-                                this.#newPosition = createVector(this.#position.x, this.#position.y);
-                            }
-
-                            if (displacement.x > 0)
-                                this.#touching.left = true;
-                            if (displacement.x < 0)
-                                this.#touching.right = true;
-                            if (displacement.y < 0)
-                                this.#touching.bottom = true;
-                            if (displacement.y > 0)
-                                this.#touching.top = true;
-
-                            result = true;
-                        }
-                    }
-                }
-            }
-        }
-        return result;
+    Collide(...otherSprites) {
+        let spritesHit = this.#collider.Hit(false, ...otherSprites.map(sprite => sprite.#collider)); // the collider hit function needs an array of colliders, not sprites
+        if (spritesHit.length > 0)
+            this.OnCollide(otherSprites);
+        return spritesHit.length > 0;
     }
+
+    OnCollide(spritesHit) { }
 
     Remove() {
         this.#removed = true;
@@ -215,12 +150,12 @@ class Sprite3 {
 
     Update() {
         noStroke();
-        fill(this.#shapeColor);
+        fill("magenta");
         rect(0, 0, this.#width, this.#height);
     }
 
-    #PreUpdate() {
-        if (!this.#removed) {
+    Display() {
+        if (this.#visible && !this.#removed) {
             //if there has been a change somewhere after the last update
             //the old position is the last position registered in the update
             if (this.#newPosition !== this.#position)
@@ -244,20 +179,10 @@ class Sprite3 {
                 this.#life--;
             if (this.#life === 0)
                 this.Remove();
-        }
-    }
-
-    SetDefaultCollider() {
-        this.#collider = new AABBCollider(this.#position, createVector(this.#width, this.#height));
-    }
-
-    Display() {
-        if (this.#visible && !this.#removed) {
-            this.#PreUpdate();
 
             push();
-            colorMode(RGB);
 
+            colorMode(RGB);
             noStroke();
             rectMode(CENTER);
             ellipseMode(CENTER);
@@ -269,30 +194,34 @@ class Sprite3 {
 
             //draw debug info
             if (this.#debug) {
-                let ctx = document.querySelector("canvas").getContext("2d");
-                ctx.save();
-
-                ctx.lineWidth = 2;
-                ctx.strokeStyle = "#00FF00";
-                ctx.strokeRect(this.Position.x - this.Width / 2, this.Position.y - this.Height / 2, this.Width, this.Height);
-
-                ctx.beginPath();
-                ctx.moveTo(this.Position.x - 10, this.Position.y);
-                ctx.lineTo(this.Position.x + 10, this.Position.y);
-                ctx.stroke();
-                
-                ctx.beginPath();
-                ctx.moveTo(this.Position.x, this.Position.y - 10);
-                ctx.lineTo(this.Position.x, this.Position.y + 10);
-                ctx.stroke();
-
-                ctx.fillStyle = "#00FF00";
-                ctx.font = '16px sans-serif';
-                ctx.fillText(this.#depth + '', this.Position.x + 4, this.Position.y - 2);
-
-                ctx.restore();
+                this.#DrawDebugInfo();
             }
 
         }
+    }
+
+    #DrawDebugInfo() {
+        let ctx = document.querySelector("canvas").getContext("2d");
+        ctx.save();
+
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "#00FF00";
+        ctx.strokeRect(this.Position.x - this.Width / 2, this.Position.y - this.Height / 2, this.Width, this.Height);
+
+        ctx.beginPath();
+        ctx.moveTo(this.Position.x - 10, this.Position.y);
+        ctx.lineTo(this.Position.x + 10, this.Position.y);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(this.Position.x, this.Position.y - 10);
+        ctx.lineTo(this.Position.x, this.Position.y + 10);
+        ctx.stroke();
+
+        ctx.fillStyle = "#00FF00";
+        ctx.font = '16px sans-serif';
+        ctx.fillText(this.#depth + '', this.Position.x + 4, this.Position.y - 2);
+
+        ctx.restore();
     }
 }

@@ -1,4 +1,4 @@
-class TileFloor extends Sprite2 { 
+class TileFloor extends GameObject { 
     constructor(x, y, size) { 
         super(x, y - size / 4, size, size/2);
         this.Debug = true;

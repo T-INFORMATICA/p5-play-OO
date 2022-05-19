@@ -1,4 +1,4 @@
-class TileWall extends Sprite2 { 
+class TileWall extends GameObject { 
     constructor(x, y, size) { 
         super(x, y, size, size);
         this.Debug = true;

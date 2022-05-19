@@ -1,4 +1,4 @@
-class Player extends Sprite2 {
+class Player extends GameObject {
     #jumpsLeft = 1;
     #jumped = false;
 
@@ -30,15 +30,17 @@ class Player extends Sprite2 {
         }
     }
 
-    OnCollide(other) {
-        if (other instanceof TileFloor) {
-            if (this.#jumped === false) {
-                this.#jumpsLeft = 1;
-            }
+    OnCollide(spritesHit) {
+        spritesHit.forEach(other => { 
+            if (other instanceof TileFloor) {
+                if (this.#jumped === false) {
+                    this.#jumpsLeft = 1;
+                }
 
-            if (this.Velocity.y > 0) {
-                this.Velocity.y = 0;
+                if (this.Velocity.y > 0) {
+                    this.Velocity.y = 0;
+                }
             }
-        }
+        });
     }
 }
