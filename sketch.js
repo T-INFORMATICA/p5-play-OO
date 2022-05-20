@@ -14,12 +14,9 @@ function setup() {
         floors.push(new TileWall(300, 400 - (50 * y), 50));
     }
     floors.push(new TileFloor(300, 425 - (50 * 4), 50));
+
+    // GameManager.GetInstance().AddCollisionLayerInteraction(CollisionLayers.GROUND, CollisionLayers.PLAYER);
 }
 
-function draw() {
-    background("lightblue");
-    player.Display();
-    floors.forEach(f => f.Display());
 
-    floors.forEach(f => player.Collide(f));
-}
+window.draw = GameManager.Draw;

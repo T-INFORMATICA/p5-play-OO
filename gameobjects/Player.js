@@ -6,6 +6,7 @@ class Player extends GameObject {
         super(x, y, size, size, true);
         this.SetDefaultCollider();
         this.Debug = true;
+        this.CollisionLayer = CollisionLayers.Layers.PLAYER;
     }
 
     Update() {
