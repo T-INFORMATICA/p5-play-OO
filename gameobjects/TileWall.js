@@ -1,7 +1,6 @@
 class TileWall extends GameObject { 
     constructor(x, y, size) { 
         super(x, y, size, size);
-        this.Debug = true;
         this.SetDefaultCollider();
         this.CollisionLayer = Settings.Layers.GROUND;
     }
