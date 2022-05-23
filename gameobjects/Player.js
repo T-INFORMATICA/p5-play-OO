@@ -33,11 +33,16 @@ class Player extends GameObject {
     OnCollide(spritesHit) {
         spritesHit.forEach(other => { 
             if (other instanceof TileFloor) {
-                if (this.#jumped === false) {
-                    this.#jumpsLeft = 1;
+                if (this.Hit.bottom === true) {
+                    if (this.#jumped === false) {
+                        this.#jumpsLeft = 1;
+                    }
+    
+                    if (this.Velocity.y > 0) {
+                        this.Velocity.y = 0;
+                    }
                 }
-
-                if (this.Velocity.y > 0) {
+                if (this.Hit.top === true) {
                     this.Velocity.y = 0;
                 }
             }
