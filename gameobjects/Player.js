@@ -42,7 +42,7 @@ class Player extends GameObject {
                         this.Velocity.y = 0;
                     }
                 }
-                if (this.Hit.top === true) {
+                if (this.Hit.top === true && this.Hit.left === false && this.Hit.right === false) {
                     this.Velocity.y = 0;
                 }
             }
