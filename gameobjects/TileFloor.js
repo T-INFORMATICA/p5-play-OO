@@ -1,6 +1,6 @@
 class TileFloor extends GameObject { 
-    constructor(x, y, size) { 
-        super(x, y - size / 4, size, size/2);
+    constructor(x, y, width) { 
+        super(x, y, width, 25);
         this.SetDefaultCollider();
         this.CollisionLayer = Settings.Layers.GROUND;
     }
