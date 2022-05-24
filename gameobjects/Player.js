@@ -1,17 +1,37 @@
 class Player extends GameObject {
     #jumpsLeft = 1;
     #jumped = false;
+    #animationFrames = undefined;
+    #spritesheet = undefined;
+
+    #animation = undefined;
 
     constructor(x, y, size) {
-        super(x, y, size, size, true);
+        super(x, y, 37, size);
         this.SetDefaultCollider();
         this.CollisionLayer = Settings.Layers.PLAYER;
+
+        this.#animation = new Animation("assets/images/p3_spritesheet.png", "assets/images/p3_spritesheet.json")
+
+        this.#animation.AddAnimationLoop("idle", 4);
+        this.#animation.AddAnimationLoop("walk", 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
+        this.#animation.AddAnimationLoop("jump", 3);
+        this.#animation.CurrentAnimationLoop = "idle";
     }
 
     Update() {
-        noStroke();
-        fill("red");
-        rect(0, 0, this.Width, this.Height);
+        if (this.#jumpsLeft < 1) {
+            this.#animation.CurrentAnimationLoop = "jump";
+        }
+        else if (this.Velocity.x < 0.1 && this.Velocity.x > -0.1) {
+            this.#animation.CurrentAnimationLoop = "idle";
+        }
+        else if (this.Velocity.x != 0) {
+            this.#animation.CurrentAnimationLoop = "walk";
+        }
+        this.#animation.Draw(this.Width, this.Height);
+
+
         this.SetSpeed(this.Velocity.y + .4, 90);
         this.#jumped = false;
 
@@ -23,7 +43,7 @@ class Player extends GameObject {
             this.AddSpeed(5, 0);
         }
             
-        if (keyIsDown(UP_ARROW) === true && this.#jumpsLeft > 0) {
+        if (keyWentDown(UP_ARROW) === true && this.#jumpsLeft > 0) {
             this.SetSpeed(12, -90);
             this.#jumpsLeft--;
             this.#jumped = true;
