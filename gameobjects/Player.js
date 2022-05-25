@@ -20,6 +20,10 @@ class Player extends GameObject {
     }
 
     Update() {
+        push();
+        if (this.Velocity.x < 0) {
+            scale(-1, 1);
+        }
         if (this.#jumpsLeft < 1) {
             this.#animation.CurrentAnimationLoop = "jump";
         }
@@ -30,19 +34,20 @@ class Player extends GameObject {
             this.#animation.CurrentAnimationLoop = "walk";
         }
         this.#animation.Draw(this.Width, this.Height);
+        pop();
 
 
         this.SetSpeed(this.Velocity.y + .4, 90);
         this.#jumped = false;
 
-        
+
         if (keyIsDown(LEFT_ARROW) === true) {
             this.AddSpeed(5, 180);
         }
         if (keyIsDown(RIGHT_ARROW) === true) {
             this.AddSpeed(5, 0);
         }
-            
+
         if (keyWentDown(UP_ARROW) === true && this.#jumpsLeft > 0) {
             this.SetSpeed(12, -90);
             this.#jumpsLeft--;
@@ -50,21 +55,28 @@ class Player extends GameObject {
         }
     }
 
+    OnOverlap(spritesHit) { 
+        spritesHit.forEach(other => {
+            if (other instanceof Coin) { 
+                console.log("found coin!!!");
+                other.Collect();
+            }
+         });
+    }
+
     OnCollide(spritesHit) {
-        spritesHit.forEach(other => { 
-            if (other instanceof TileFloor) {
-                if (this.Hit.bottom === true) {
-                    if (this.#jumped === false) {
-                        this.#jumpsLeft = 1;
-                    }
-    
-                    if (this.Velocity.y > 0) {
-                        this.Velocity.y = 0;
-                    }
+        spritesHit.forEach(other => {
+            if (this.Hit.bottom === true) {
+                if (this.#jumped === false) {
+                    this.#jumpsLeft = 1;
                 }
-                if (this.Hit.top === true && this.Hit.left === false && this.Hit.right === false) {
+
+                if (this.Velocity.y > 0) {
                     this.Velocity.y = 0;
                 }
+            }
+            if (this.Hit.top === true && this.Hit.left === false && this.Hit.right === false) {
+                this.Velocity.y = 0;
             }
         });
     }
