@@ -17,6 +17,9 @@ class Game {
     }
 
     Update() {
+        if (!this.#currentLevel.LoadingDone)
+            return;
+        
         if (this.#currentLevel.BackgroundTexture) { 
             image(this.#currentLevel.BackgroundTexture, 0, 0, this.#currentLevel.BackgroundTexture.width, this.#currentLevel.BackgroundTexture.height);
         }
