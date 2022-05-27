@@ -462,6 +462,10 @@ class GameObject {
         this.#collisionLayer = value;
     }
 
+    set Life(value) {
+        this.#life = value;
+    }
+
     get Immovable() {
         return this.#immovable;
     }
