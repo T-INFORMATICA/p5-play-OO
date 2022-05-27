@@ -8,8 +8,8 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
-      - run: npm install -g concat-files-cli
-      - run: concat-files-cli -i ./lib/* -o ./release/lib2.js
+      - run: npm install -g concat-cli
+      - run: concat-cli -f ./lib/*.js -o ./release/bundle.js
       
 # Auto-commit to repository
       - uses: stefanzweifel/git-auto-commit-action@v4
