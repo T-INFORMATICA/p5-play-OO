@@ -326,7 +326,6 @@ class GameManager {
     }
 
     static Setup() {
-        
         GameManager.GetInstance().#gameInstance = new Settings.GameClass();
     }
 
