@@ -1,8 +1,10 @@
-class Game {
+
+class Platformer extends Game {
     #player = null;
     #tiles = [];
     #currentLevel = undefined;
     constructor() {
+        super();
 
         this.#currentLevel = new Level("assets/levels/level1.json");
         this.#player = new Player(10, 10, 50);

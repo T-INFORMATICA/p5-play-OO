@@ -1,4 +1,6 @@
 class Settings {
+    static GameClass = Platformer;
+    
     static Layers = {
         PLAYER: 0,
         GROUND: 1,
