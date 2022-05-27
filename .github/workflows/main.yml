@@ -8,5 +8,5 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
-      - run: npm install -g better-concat
-      - run: concat -out release/lib.js -files ./lib
+      - run: npm install -g concat-files-cli
+      - run: concat-files-cli -i ./lib/* -o ./release/lib.js
