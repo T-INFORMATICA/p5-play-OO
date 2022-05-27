@@ -8,5 +8,5 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
-      - run: npm install -g combine-files
-      - run: combine-files --mask=*.js --input=./lib --output=./release/lib.js
+      - run: npm install -g concat
+      - run: concat -o output.js ./lib
