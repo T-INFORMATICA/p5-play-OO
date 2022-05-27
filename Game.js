@@ -5,11 +5,12 @@ class Game {
     constructor() {
 
         this.#currentLevel = new Level("assets/levels/level1.json");
+        this.#player = new Player(10, 10, 50);
 
         let interval = setInterval(() => { 
             if (this.#currentLevel.LoadingDone) { 
                 clearInterval(interval);
-                this.#player = new Player(this.#currentLevel.PlayerSpawnCoord.x, this.#currentLevel.PlayerSpawnCoord.y, 50);
+                this.#player.Position = createVector(this.#currentLevel.PlayerSpawnCoord.x, this.#currentLevel.PlayerSpawnCoord.y);
             }
         }, 100);
 
