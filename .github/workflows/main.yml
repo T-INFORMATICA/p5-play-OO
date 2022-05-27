@@ -9,7 +9,7 @@ jobs:
         with:
           node-version: '16'
       - run: npm install -g concat-cli
-      - run: concat-cli -f ./lib/*.js -o ./release/bundle.js
+      - run: concat-cli -f ./lib/*.js -o ./release/lib.js
       
 # Auto-commit to repository
       - uses: stefanzweifel/git-auto-commit-action@v4
