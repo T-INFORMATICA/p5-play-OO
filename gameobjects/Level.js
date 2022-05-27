@@ -1,18 +1,25 @@
 class Level {
     #backgroundTexture = undefined;
-    #floorTexture = undefined;
-    #fillTexture = undefined;
 
     #playerSpawnCoord = undefined;
+    #exitSign = undefined;
 
     #loadingDone = false;
     #tiles = [];
     #coins = [];
 
     #currentLevelData = {};
-    constructor(initialLevel) {
 
-        this.#currentLevelData = loadJSON(initialLevel, data => {
+    constructor(initialLevel) {
+        this.#LoadLevelData(initialLevel);
+    }
+
+    #LoadLevelData(levelJSON) {
+        this.#loadingDone = false;
+        this.#currentLevelData = loadJSON(levelJSON, data => {
+            loadImage(data.background, src => {
+                this.#backgroundTexture = createFillImage(src, width * 5, height, src.width, src.height);
+            });
             data.tiles.forEach(tileData => {
                 this.#tiles.push(new Tile(tileData.x, tileData.y, tileData.w, tileData.h));
             });
@@ -20,11 +27,28 @@ class Level {
                 this.#coins.push(new Coin(coinData.x, coinData.y));
             });
             this.#playerSpawnCoord = createVector(data.playerSpawn.x * Settings.GridSize, data.playerSpawn.y * Settings.GridSize);
+
+            if (data.nextLevel) {
+                this.#exitSign = new ExitSign(data.levelExit.x, data.levelExit.y);
+            }
             this.#loadingDone = true;
         });
     }
 
-    get LoadingDone() { 
+    GoToNextLevel() {
+
+        this.#tiles.forEach(t => t.Remove());
+        this.#coins.forEach(c => c.Remove());
+        this.#exitSign.Remove();
+
+        this.#LoadLevelData(this.#currentLevelData.nextLevel);
+    }
+
+    get ExitSign() {
+        return this.#exitSign;
+    }
+
+    get LoadingDone() {
         return this.#loadingDone;
     }
 
@@ -34,12 +58,6 @@ class Level {
 
     get PlayerSpawnCoord() {
         return this.#playerSpawnCoord.copy();
-    }
-
-    set BackgroundTextureUrl(value) {
-        loadImage(value, src => {
-            this.#backgroundTexture = createFillImage(src, width * 5, height, src.width, src.height);
-        });
     }
 
     get BackgroundTexture() {
