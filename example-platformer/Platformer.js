@@ -42,6 +42,6 @@ class Platformer extends Game {
             translate((this.#player.Position.x - width / 2) * -1, 0);
         }
 
-        this.#player.Overlap(...this.#currentLevel.Coins);
+        // this.#player.Overlap(...this.#currentLevel.Coins);
     }
 }
