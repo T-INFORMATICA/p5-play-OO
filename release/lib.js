@@ -156,22 +156,24 @@ class Collider {
         return collidersHit.map(collider => collider.#parent);
     }
 
-    Update() {
-        noFill();
-        stroke(0, 255, 0);
-        rectMode(CENTER);
-        rect(this.Center.x + this.Offset.x, this.Center.y + this.Offset.y, this.Size.x / 2, this.Size.y / 2);
+    UpdateCollider() {
+        this.#extents.x = this.#parent.Width;
+        this.#extents.y = this.#parent.Height;
     }
 
     Overlap(other) {
         //box vs box
         if (other instanceof Collider && !other.#parent.Removed && !this.#parent.Removed) {
-            var md = other.MinkowskiDifference(this);
+            let difference = other.MinkowskiDifference(this);
 
-            if (md.Min.x <= 0 &&
-                md.Max.x >= 0 &&
-                md.Min.y <= 0 &&
-                md.Max.y >= 0) {
+            if (this.#parent instanceof Explosion && other.#parent instanceof City) { 
+                console.log("test")
+            }
+
+            if (difference.Min.x <= 0 &&
+                difference.Max.x >= 0 &&
+                difference.Min.y <= 0 &&
+                difference.Max.y >= 0) {
                 return true;
             }
             else
@@ -182,7 +184,7 @@ class Collider {
         // else if (other instanceof CircleCollider) {
 
         //     //find closest point to the circle on the box
-        //     var pt = createVector(other.Center.x, other.Center.y);
+        //     let pt = createVector(other.Center.x, other.Center.y);
 
         //     //I don't know what's going o try to trace a line from centers to see
         //     if (other.Center.x < this.left())
@@ -195,7 +197,7 @@ class Collider {
         //     else if (other.Center.y > this.bottom())
         //         pt.y = this.bottom();
 
-        //     var distance = pt.dist(other.Center);
+        //     let distance = pt.dist(other.Center);
 
         //     return distance < other.radius;
         // }
@@ -203,13 +205,13 @@ class Collider {
 
     Collide(other) {
         if (other instanceof Collider) {
-            var md = other.MinkowskiDifference(this);
+            let md = other.MinkowskiDifference(this);
 
             if (md.Min.x <= 0 &&
                 md.Max.x >= 0 &&
                 md.Min.y <= 0 &&
                 md.Max.y >= 0) {
-                var boundsPoint = md.ClosestPointOnBoundsToPoint(createVector(0, 0));
+                let boundsPoint = md.ClosestPointOnBoundsToPoint(createVector(0, 0));
 
                 return boundsPoint;
             }
@@ -219,16 +221,23 @@ class Collider {
     }
 
     MinkowskiDifference(other) {
-        var topLeft = this.Min.sub(other.Max);
-        var fullSize = this.Size.add(other.Size);
-        return new Collider(null, topLeft.add(fullSize.div(2)), fullSize.div(2));
+        let topLeft = this.Min.sub(other.Max);
+        let fullSize = this.Size.add(other.Size);
+
+        let difference = new Collider(null, topLeft.add(fullSize.div(2)), fullSize.div(2));
+
+        if (this.#parent instanceof Explosion && other.#parent instanceof City) { 
+            console.log("test")
+        }
+
+        return difference;
     }
 
 
     ClosestPointOnBoundsToPoint(point) {
         // test x first
-        var minDist = abs(point.x - this.Min.x);
-        var boundsPoint = createVector(this.Min.x, point.y);
+        let minDist = abs(point.x - this.Min.x);
+        let boundsPoint = createVector(this.Min.x, point.y);
 
         if (abs(this.Max.x - point.x) < minDist) {
             minDist = abs(this.Max.x - point.x);
@@ -354,6 +363,13 @@ class GameManager {
             });
         }
 
+        this.#allGameObjects.forEach(go => { 
+            if (go.Collider) {
+                let gameObjectsWithCollider = this.#allGameObjects.filter(f => f.Collider && f != go)
+                go.Overlap(...gameObjectsWithCollider);
+            }
+        });
+
         if (Settings.ShowGrid) {
             this.#DrawGridOverlay();
         }
@@ -450,6 +466,10 @@ class GameObject {
 
     get Removed() { 
         return this.#removed;
+    }
+
+    get Collider() { 
+        return this.#collider;
     }
 
     get Hit() {
@@ -599,6 +619,9 @@ class GameObject {
 
     Display() {
         if (this.#visible && !this.#removed) {
+            if (this.Collider) { 
+                this.Collider.UpdateCollider();   
+            }
             //if there has been a change somewhere after the last update
             //the old position is the last position registered in the update
             if (this.#newPosition !== this.#position)
@@ -647,23 +670,27 @@ class GameObject {
         let ctx = document.querySelector("canvas").getContext("2d");
         ctx.save();
 
+        let pos = this.Collider ? this.Collider.Center : this.Position;
+        let w = this.Collider ? this.Collider.Size.x / 2 : 0;
+        let h = this.Collider ? this.Collider.Size.y / 2 : 0;
+
         ctx.lineWidth = 2;
         ctx.strokeStyle = "#00FF00";
-        ctx.strokeRect(this.Position.x - this.Width / 2, this.Position.y - this.Height / 2, this.Width, this.Height);
+        ctx.strokeRect(pos.x - w / 2, pos.y - h / 2, w, h);
 
         ctx.beginPath();
-        ctx.moveTo(this.Position.x - 10, this.Position.y);
-        ctx.lineTo(this.Position.x + 10, this.Position.y);
+        ctx.moveTo(pos.x - 10, pos.y);
+        ctx.lineTo(pos.x + 10, pos.y);
         ctx.stroke();
 
         ctx.beginPath();
-        ctx.moveTo(this.Position.x, this.Position.y - 10);
-        ctx.lineTo(this.Position.x, this.Position.y + 10);
+        ctx.moveTo(pos.x, pos.y - 10);
+        ctx.lineTo(pos.x, pos.y + 10);
         ctx.stroke();
 
         ctx.fillStyle = "#00FF00";
         ctx.font = '16px sans-serif';
-        ctx.fillText(this.#depth + '', this.Position.x + 4, this.Position.y - 2);
+        ctx.fillText(this.#depth + '', pos.x + 4, pos.y - 2);
 
         ctx.restore();
     }
