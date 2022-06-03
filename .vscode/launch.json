@@ -8,8 +8,8 @@
             "type": "pwa-chrome",
             "request": "launch",
             "name": "Launch Chrome against localhost",
-            "webRoot": "${workspaceFolder}/example/",
-            "url": "http://localhost:5500"
+            "webRoot": "${workspaceFolder}",
+            "url": "http://localhost:5500/example-missile-command/"
         }
     ]
 }
