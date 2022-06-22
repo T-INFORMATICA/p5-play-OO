@@ -340,7 +340,7 @@ class GameManager {
         if (this.#gameInstance) {
             this.#gameInstance.Update();
         }
-        this.#allGameObjects.sort((a, b) => a.Depth > b.Depth ? 1 : 0);
+        this.#allGameObjects.sort((a, b) => a.Depth == b.Depth ? 0 : a.Depth > b.Depth ? 1 : -1);
         this.#allGameObjects.forEach(go => go.Display());
 
         for (const layerA in Settings.LayerInteractions) {
