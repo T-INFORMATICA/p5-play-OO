@@ -17,7 +17,7 @@ class Settings {
     static GameWidth = 800;
     static GameHeight = 600;
 
-    static Debug = false;
+    static Debug = true;
     static ShowStats = true;
     static ShowGrid = false;
     static GridSize = 50;
