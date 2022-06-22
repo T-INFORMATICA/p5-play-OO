@@ -298,12 +298,8 @@ class GameManager {
     }
 
     AddGameObject(gameObject) {
-        gameObject.Depth = this.#allGameObjects.length;
+        gameObject.Index = this.#allGameObjects.length;
         this.#allGameObjects.push(gameObject);
-    }
-
-    get MaxDepth() {
-        return this.#allGameObjects.length - 1;
     }
 
     AddGameObjectToCollisionLayer(gameObject, collisionLayer) {
@@ -344,7 +340,7 @@ class GameManager {
         if (this.#gameInstance) {
             this.#gameInstance.Update();
         }
-        // this.#allGameObjects.slice().reverse().forEach(go => go.Display());
+        this.#allGameObjects.sort((a, b) => a.Depth > b.Depth ? 1 : 0);
         this.#allGameObjects.forEach(go => go.Display());
 
         for (const layerA in Settings.LayerInteractions) {
@@ -429,6 +425,7 @@ class GameObject {
     #newPosition;
     #deltaPosition;
 
+    #index = 0;
     #depth = 0;
     #life = -1;
     #visible = true;
@@ -492,6 +489,14 @@ class GameObject {
 
     set Depth(value) {
         this.#depth = value;
+    }
+
+    get Depth() {
+        return this.#depth;
+    }
+
+    set Index(value) {
+        this.#index = value;
     }
 
     get Width() {
@@ -683,7 +688,8 @@ class GameObject {
 
         ctx.fillStyle = "#00FF00";
         ctx.font = '16px sans-serif';
-        ctx.fillText(this.#depth + '', pos.x + 4, pos.y - 2);
+        ctx.fillText(this.#index + '', pos.x + 4, pos.y - 2);
+        ctx.fillText(this.#depth + '', pos.x + 4, pos.y + 15);
 
         ctx.restore();
     }
