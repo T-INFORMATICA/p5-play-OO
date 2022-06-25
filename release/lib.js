@@ -6,7 +6,7 @@ class Animation {
     #currentAnimationLoop = "";
     #currentAnimationFrame = 0;
 
-    constructor(spritesheetImage, framesJSON) {
+    constructor(spritesheetImage, framesJSON, speed = 20) {
         this.#spritesheet = loadImage(spritesheetImage);
         this.#frames = loadJSON(framesJSON);
 
