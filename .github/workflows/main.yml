@@ -21,7 +21,7 @@ jobs:
           source_dir: ./release
           output_dir: ./docs
 #          config_file: conf.json
-          template: minami
+          template: better-docs
           front_page: README.md
           
       - name: Deploy documentation
