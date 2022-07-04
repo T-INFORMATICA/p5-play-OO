@@ -416,6 +416,7 @@ p5.prototype.createFillImage = function (src, dw, dh, sw, sh) {
     }
     return img;
 }
+/** Class representing an object in your game. */
 class GameObject {
     #width = 100;
     #height = 100;
@@ -438,6 +439,13 @@ class GameObject {
     #collider = undefined;
     #collisionLayer = undefined;
 
+    /** 
+     * Create a GameObject
+     * @param {number} x - X position
+     * @param {number} y - Y position
+     * @param {number} width - The width of the GameObject
+     * @param {number} height - The height of the GameObject
+     */
     constructor(x, y, width, height) {
         this.#position = createVector(x, y);
         this.#previousPosition = createVector(x, y);
