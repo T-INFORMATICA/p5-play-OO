@@ -27,9 +27,9 @@ jobs:
 
 
 # Auto-commit to repository
-
-      - name: commit
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: concatenated lib files
-          branch: ${{ github.ref }}
+#
+#      - name: commit
+#        uses: stefanzweifel/git-auto-commit-action@v4
+#        with:
+#          commit_message: concatenated lib files
+#          branch: ${{ github.ref }}
