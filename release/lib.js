@@ -478,6 +478,11 @@ class GameObject {
         return this.#collider;
     }
 
+
+    /**
+     * The location where the collider for this GameObject was hit. (left, right, top, bottom)
+     * @return {Collider} The side on which the current collider was hit.
+     */
     get Hit() {
         return this.#collider.HitLocation;
     }
