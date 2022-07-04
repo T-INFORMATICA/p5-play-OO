@@ -1,7 +1,7 @@
 name: merge-lib-files
 on: [push]
 jobs:
-  merge-lib-files:
+  generate-documentation:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
