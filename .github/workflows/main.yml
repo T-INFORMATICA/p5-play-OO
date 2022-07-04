@@ -16,3 +16,8 @@ jobs:
         with:
           commit_message: concatenated lib files
           branch: ${{ github.ref }}
+          
+      - uses: codevise/documentation-js-action@v1
+        with:
+          input: ./release
+          output: ./docs
