@@ -1,9 +1,7 @@
 name: GitHub pages Documentation
 
 on:
-  push:
-    branches:
-      - master
+  [push]
 
 jobs:
   deploy:
