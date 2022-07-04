@@ -1,26 +1,28 @@
-name: jsdoc
+name: GitHub pages Documentation
+
 on:
- [push]
+  push:
+    branches:
+      - master
 
 jobs:
-  publish:
+  deploy:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v1
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Build
-      uses: andstor/jsdoc-action@v1
-      with:
-        source_dir: ./release
-        recurse: true
-        output_dir: ./out
-        
-# Auto-commit to repository
+      - name: Build
+        uses: andstor/jsdoc-action@v1
+        with:
+          source_dir: ./release
+          output_dir: ./out
+          config_file: conf.json
+          template: minami
+          front_page: README.md
 
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
-    - uses: stefanzweifel/git-auto-commit-action@v4
-      with:
-        commit_message: concatenated lib files
-        branch: ${{ github.ref }}
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+          publish_dir: ./out
