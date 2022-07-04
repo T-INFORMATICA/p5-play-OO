@@ -462,10 +462,18 @@ class GameObject {
         GameManager.GetInstance().AddGameObject(this);
     }
 
+    /**
+     * Property to check if the GameObject was removed from the scene
+     * @return {boolean} true if the GameObject was removed from the scene
+     */
     get Removed() { 
         return this.#removed;
     }
 
+    /**
+     * The collider that is currently used on this GameObject
+     * @return {Collider} The collider for this GameObject
+     */
     get Collider() { 
         return this.#collider;
     }
