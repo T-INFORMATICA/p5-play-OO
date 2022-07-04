@@ -1,7 +1,9 @@
-name: GitHub pages Documentation
+name: GitHub pages
 
 on:
-  [push]
+  push:
+    branches:
+      - master
 
 jobs:
   deploy:
@@ -13,8 +15,8 @@ jobs:
       - name: Build
         uses: andstor/jsdoc-action@v1
         with:
-          source_dir: ./release
-          output_dir: ./docs
+          source_dir: ./src
+          output_dir: ./out
 #          config_file: conf.json
           template: minami
           front_page: README.md
@@ -22,5 +24,5 @@ jobs:
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
-          deploy_key: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs
+          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+          publish_dir: ./out
