@@ -17,6 +17,9 @@ jobs:
         output_dir: ./out
         
 # Auto-commit to repository
+
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
     - uses: stefanzweifel/git-auto-commit-action@v4
       with:
         commit_message: concatenated lib files
