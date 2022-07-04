@@ -1,3 +1,4 @@
+/** Class representing an animation based on a spritesheet and json. */
 class Animation {
     #spritesheet = undefined;
     #frames = undefined;
@@ -6,9 +7,14 @@ class Animation {
     #currentAnimationLoop = "";
     #currentAnimationFrame = 0;
 
-    constructor(spritesheetImage, framesJSON, speed = 20) {
-        this.#spritesheet = loadImage(spritesheetImage);
-        this.#frames = loadJSON(framesJSON);
+    /**
+     * Create a new Animation.
+     * @param {string} spritesheetImagePath - The path to an image representing a spritesheet.
+     * @param {string} framesJSONPath - The path to a JSON file holding all frames data for the spritesheet.
+     */
+    constructor(spritesheetImagePath, framesJSONPath, speed = 20) {
+        this.#spritesheet = loadImage(spritesheetImagePath);
+        this.#frames = loadJSON(framesJSONPath);
 
         setInterval(() => {
             if (this.#currentAnimationLoop in this.#animationLoops) {
@@ -17,6 +23,21 @@ class Animation {
         }, speed);
     }
 
+    /**
+     * Add an animationloop to the animation. An animation loop consists of several frames that are defined in the framesJSON file for this animation.
+     * Framenumbers are 0-based. 
+     * Frames can be reused in different animationloops.
+     * @param {string} loopName - The name for this animationloop. This name must be unique!
+     * @param {number} frameNumbers - the framenumbers for this animationloop, as defined (in order) in the framesJSON file for this animation.
+     */
+    AddAnimationLoop(loopName, ...frameNumbers) {
+        this.#animationLoops[loopName] = frameNumbers;
+    }
+
+    /**
+     * Set the current animation loop to a previously-defined animation-loop.
+     * @param {string} value - the name of the animation-loop that should run from now on.
+     */
     set CurrentAnimationLoop(value) {
         if (this.#currentAnimationLoop == value) {
             return;
@@ -27,10 +48,11 @@ class Animation {
         }
     }
 
-    AddAnimationLoop(loopName, ...frameNumbers) {
-        this.#animationLoops[loopName] = frameNumbers;
-    }
-
+    /**
+     * Draws the current animation-frame for the currently selected animation-loop.
+     * @param {number} w - the draw-width for this animation
+     * @param {number} h - the draw-height for this animation
+     */
     Draw(w, h) {
         if (this.#currentAnimationLoop in this.#animationLoops &&
             this.#frames[this.#animationLoops[this.#currentAnimationLoop][this.#currentAnimationFrame]]) {
@@ -478,7 +500,6 @@ class GameObject {
         return this.#collider;
     }
 
-
     /**
      * The location where the collider for this GameObject was hit. (left, right, top, bottom)
      * @return {Collider} The side on which the current collider was hit.
@@ -487,19 +508,36 @@ class GameObject {
         return this.#collider.HitLocation;
     }
 
+    /**
+     * Changes the collision layer for this GameObject. The collision layer determines with which other GameObject this GameObject can interact. 
+     * collision layers are set in the Settings.js
+     * @param {string} value - The side on which the current collider was hit.
+     */
     set CollisionLayer(value) {
         GameManager.GetInstance().AddGameObjectToCollisionLayer(this, value);
         this.#collisionLayer = value;
     }
 
+    /**
+     * Determines how many frames this GameObject will remain alive (before being removed automatically). 
+     * @param {number} value - How many frames this GameObject will remain alive. -1 will keep this GameObject alive indefinite (default).
+     */
     set Life(value) {
         this.#life = value;
     }
 
+    /**
+     * An immovable object cannot be displaced by another GameObject.
+     * @return {Boolean} Returns true if this GameObject is immovable.
+     */
     get Immovable() {
         return this.#immovable;
     }
 
+    /**
+     * An immovable object cannot be displaced by another GameObject.
+     * @param {Boolean} value - set it to true to make this GameObject immovable. False allows it to be displaced on collision with other GameObjects (default).
+     */
     set Immovable(value) {
         this.#immovable = value;
     }
