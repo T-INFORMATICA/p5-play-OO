@@ -1,11 +1,16 @@
-name: merge-lib-files
-on: [push]
+name: jsdoc
+on:
+ [push]
+
 jobs:
-  generate-documentation:
+  publish:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v1
-      - uses: codevise/documentation-js-action@v1
-        with:
-          input: ./release
-          output: ./docs
+    - uses: actions/checkout@v1
+
+    - name: Build
+      uses: codevise/documentation-js-action@v1
+      with:
+        input: ./release
+        output: ./docs
