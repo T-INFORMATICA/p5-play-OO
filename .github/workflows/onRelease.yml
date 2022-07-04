@@ -10,7 +10,8 @@ jobs:
     - uses: actions/checkout@v1
 
     - name: Build
-      uses: codevise/documentation-js-action@v1
+      uses: andstor/jsdoc-action@v1
       with:
-        input: ./release
-        output: ./docs
+        source_dir: ./src
+        recurse: true
+        output_dir: ./out
