@@ -15,3 +15,9 @@ jobs:
         source_dir: ./release
         recurse: true
         output_dir: ./out
+        
+# Auto-commit to repository
+    - uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: concatenated lib files
+        branch: ${{ github.ref }}
