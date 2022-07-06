@@ -4,15 +4,35 @@ jobs:
   merge-lib-files:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: checkout code
+        uses: actions/checkout@v3
+      - name: setup node-js
+        uses: actions/setup-node@v3
         with:
           node-version: '16'
-      - run: npm install -g concat-cli
-      - run: concat-cli -f ./lib/*.js -o ./release/lib.js
+      - name: install concat-cli
+        run: npm install -g concat-cli
+      - name: concatenate lib files to release/lib.js
+        run: concat-cli -f ./lib/*.js -o ./release/lib.js
+        
+      - name: Build documentation
+        uses: andstor/jsdoc-action@v1
+        with:
+          source_dir: ./release
+          output_dir: ./docs
+#          config_file: conf.json
+          template: better-docs
+          front_page: README.md
+          
+      - name: Deploy documentation
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
       
 # Auto-commit to repository
-      - uses: stefanzweifel/git-auto-commit-action@v4
+      - name: commit files to repo
+        uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: concatenated lib files
           branch: ${{ github.ref }}

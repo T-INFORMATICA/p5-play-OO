@@ -10,6 +10,7 @@ class Player extends GameObject {
         super(x, y, 37, size);
         this.SetDefaultCollider();
         this.CollisionLayer = Settings.Layers.PLAYER;
+        this.Depth = 100;
 
         this.#animation = new Animation("assets/images/p3_spritesheet.png", "assets/images/p3_spritesheet.json")
 

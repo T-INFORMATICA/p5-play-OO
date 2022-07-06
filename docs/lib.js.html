@@ -1,4 +1,91 @@
-/** Class representing an animation based on a spritesheet and json. */
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> lib.js</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./build/entry.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+  <link type="text/css" rel="stylesheet" href="">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  
+</head>
+
+
+
+<body class="layout small-header">
+    <div id="stickyNavbarOverlay"></div>
+    
+
+<div class="top-nav">
+    <div class="inner">
+        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+        <div class="logo">
+            
+            
+        </div>
+        <div class="menu">
+            
+            <div class="navigation">
+                <a
+                    href="index.html"
+                    class="link"
+                >
+                    Documentation
+                </a>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="main">
+        <div
+            class="sidebar "
+            id="sidebarNav"
+        >
+            
+            <nav>
+                
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="Animation.html">Animation</a></li><li><a href="GameObject.html">GameObject</a></li></ul></div>
+                
+            </nav>
+        </div>
+        <div class="core" id="main-content-wrapper">
+            <div class="content">
+                <header class="page-title">
+                    <p>Source</p>
+                    <h1>lib.js</h1>
+                </header>
+                
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/** Class representing an animation based on a spritesheet and json. */
 class Animation {
     #spritesheet = undefined;
     #frames = undefined;
@@ -54,7 +141,7 @@ class Animation {
      * @param {number} h - the draw-height for this animation
      */
     Draw(w, h) {
-        if (this.#currentAnimationLoop in this.#animationLoops &&
+        if (this.#currentAnimationLoop in this.#animationLoops &amp;&amp;
             this.#frames[this.#animationLoops[this.#currentAnimationLoop][this.#currentAnimationFrame]]) {
             image(this.#spritesheet, 0, 0, w, h, 
                 this.#frames[this.#animationLoops[this.#currentAnimationLoop][this.#currentAnimationFrame]].frame.x,
@@ -144,7 +231,7 @@ class Collider {
 
         if (overlap === true) {
             otherColliders.forEach(otherCollider => {
-                if (this !== otherCollider && !this.#parent.Removed) {
+                if (this !== otherCollider &amp;&amp; !this.#parent.Removed) {
                     if (this.Overlap(otherCollider) === true) {
                         collidersHit.push(otherCollider);
                     }
@@ -153,7 +240,7 @@ class Collider {
         }
         else {
             otherColliders.forEach(otherCollider => {
-                if (this !== otherCollider && !this.#parent.Removed) {
+                if (this !== otherCollider &amp;&amp; !this.#parent.Removed) {
                     let displacement = this.Collide(otherCollider);
 
                     if (displacement.x !== 0 || displacement.y !== 0) {
@@ -164,9 +251,9 @@ class Collider {
 
                         if (displacement.x > 0)
                             this.#hit.left = true;
-                        if (displacement.x < 0)
+                        if (displacement.x &lt; 0)
                             this.#hit.right = true;
-                        if (displacement.y < 0)
+                        if (displacement.y &lt; 0)
                             this.#hit.bottom = true;
                         if (displacement.y > 0)
                             this.#hit.top = true;
@@ -185,12 +272,12 @@ class Collider {
 
     Overlap(other) {
         //box vs box
-        if (other instanceof Collider && !other.#parent.Removed && !this.#parent.Removed) {
+        if (other instanceof Collider &amp;&amp; !other.#parent.Removed &amp;&amp; !this.#parent.Removed) {
             let difference = other.MinkowskiDifference(this);
 
-            if (difference.Min.x <= 0 &&
-                difference.Max.x >= 0 &&
-                difference.Min.y <= 0 &&
+            if (difference.Min.x &lt;= 0 &amp;&amp;
+                difference.Max.x >= 0 &amp;&amp;
+                difference.Min.y &lt;= 0 &amp;&amp;
                 difference.Max.y >= 0) {
                 return true;
             }
@@ -205,19 +292,19 @@ class Collider {
         //     let pt = createVector(other.Center.x, other.Center.y);
 
         //     //I don't know what's going o try to trace a line from centers to see
-        //     if (other.Center.x < this.left())
+        //     if (other.Center.x &lt; this.left())
         //         pt.x = this.left();
         //     else if (other.Center.x > this.right())
         //         pt.x = this.right();
 
-        //     if (other.Center.y < this.top())
+        //     if (other.Center.y &lt; this.top())
         //         pt.y = this.top();
         //     else if (other.Center.y > this.bottom())
         //         pt.y = this.bottom();
 
         //     let distance = pt.dist(other.Center);
 
-        //     return distance < other.radius;
+        //     return distance &lt; other.radius;
         // }
     }
 
@@ -225,9 +312,9 @@ class Collider {
         if (other instanceof Collider) {
             let md = other.MinkowskiDifference(this);
 
-            if (md.Min.x <= 0 &&
-                md.Max.x >= 0 &&
-                md.Min.y <= 0 &&
+            if (md.Min.x &lt;= 0 &amp;&amp;
+                md.Max.x >= 0 &amp;&amp;
+                md.Min.y &lt;= 0 &amp;&amp;
                 md.Max.y >= 0) {
                 let boundsPoint = md.ClosestPointOnBoundsToPoint(createVector(0, 0));
 
@@ -253,17 +340,17 @@ class Collider {
         let minDist = abs(point.x - this.Min.x);
         let boundsPoint = createVector(this.Min.x, point.y);
 
-        if (abs(this.Max.x - point.x) < minDist) {
+        if (abs(this.Max.x - point.x) &lt; minDist) {
             minDist = abs(this.Max.x - point.x);
             boundsPoint = createVector(this.Max.x, point.y);
         }
 
-        if (abs(this.Max.y - point.y) < minDist) {
+        if (abs(this.Max.y - point.y) &lt; minDist) {
             minDist = abs(this.Max.y - point.y);
             boundsPoint = createVector(point.x, this.Max.y);
         }
 
-        if (abs(this.Min.y - point.y) < minDist) {
+        if (abs(this.Min.y - point.y) &lt; minDist) {
             minDist = abs(this.Min.y - point.y);
             boundsPoint = createVector(point.x, this.Min.y);
         }
@@ -368,7 +455,7 @@ class GameManager {
         for (const layerA in Settings.LayerInteractions) {
             let value = Settings.LayerInteractions[layerA];
             value.forEach(layerB => {
-                if (this.#collisionLayers[layerA] && this.#collisionLayers[layerB]) {
+                if (this.#collisionLayers[layerA] &amp;&amp; this.#collisionLayers[layerB]) {
                     this.#collisionLayers[layerA].forEach(go => go.Collide(...this.#collisionLayers[layerB]));
                 }
             });
@@ -376,7 +463,7 @@ class GameManager {
 
         this.#allGameObjects.forEach(go => { 
             if (go.Collider) {
-                let gameObjectsWithCollider = this.#allGameObjects.filter(f => f.Collider && f != go)
+                let gameObjectsWithCollider = this.#allGameObjects.filter(f => f.Collider &amp;&amp; f != go)
                 go.Overlap(...gameObjectsWithCollider);
             }
         });
@@ -408,10 +495,10 @@ class GameManager {
     #DrawGridOverlay() {
         push();
         stroke('rgba(0,255,0, 0.25)');
-        for (let i = 0; i < 100; ++i) {
+        for (let i = 0; i &lt; 100; ++i) {
             line(0, i * Settings.GridSize, 100 * Settings.GridSize, i * Settings.GridSize);
         }
-        for (let i = 0; i < 100; ++i) {
+        for (let i = 0; i &lt; 100; ++i) {
             line(i * Settings.GridSize, 0, i * Settings.GridSize, 100 * Settings.GridSize);
         }
         pop();
@@ -431,8 +518,8 @@ p5.prototype.createFillImage = function (src, dw, dh, sw, sh) {
     let img = createImage(dw, dh);
 
     src.resize(sw, sh);
-    for (let i = 0; i < dw; i += src.width) {
-        for (let j = 0; j < dh; j += src.height) {
+    for (let i = 0; i &lt; dw; i += src.width) {
+        for (let j = 0; j &lt; dh; j += src.height) {
             img.copy(src, 0, 0, src.width, src.height, i, j, src.width, src.height);
         }
     }
@@ -675,7 +762,7 @@ class GameObject {
     }
 
     Display() {
-        if (this.#visible && !this.#removed) {
+        if (this.#visible &amp;&amp; !this.#removed) {
             if (this.Collider) { 
                 this.Collider.UpdateCollider();   
             }
@@ -752,4 +839,33 @@ class GameObject {
 
         ctx.restore();
     }
-}
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+            </div>
+            
+            <footer class="footer">
+                <div class="content has-text-centered">
+                    <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a></p>
+                    <p class="sidebar-created-by">
+                        <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by
+                        <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
+                    </p>
+                </div>
+            </footer>
+            
+        </div>
+        <div id="side-nav" class="side-nav">
+        </div>
+    </div>
+<script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
+<script src="scripts/linenumber.js"> </script>
+
+
+</body>
+</html>
