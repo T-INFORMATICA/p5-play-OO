@@ -68,7 +68,7 @@
             
             <nav>
                 
-                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="Animation.html">Animation</a></li><li><a href="GameManager.html">GameManager</a></li><li><a href="GameObject.html">GameObject</a></li></ul></div>
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="Animation.html">Animation</a></li><li><a href="Game.html">Game</a></li><li><a href="GameManager.html">GameManager</a></li><li><a href="GameObject.html">GameObject</a></li></ul></div>
                 
             </nav>
         </div>
@@ -358,7 +358,13 @@ class Collider {
         return boundsPoint;
     }
 }
+/**
+ * Class that represents a Game. Extend this class to create a baseclass for your Game.
+ */
 class Game {
+    /**
+     * Creates a new Game instance.
+     */
     constructor() {
         GameManager.GetInstance().GameInstance = this;
     }
