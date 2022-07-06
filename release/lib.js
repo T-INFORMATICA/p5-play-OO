@@ -354,6 +354,7 @@ class GameManager {
 
     static KeyPressed() {
         GameManager.keysPressed.push(keyCode);
+        this.#gameInstance.KeyPressed();
     }
 
     Update() {
