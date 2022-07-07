@@ -101,35 +101,109 @@
 
     <section>
         <article><h1>p5.play Object Oriented</h1>
-<p>This project enables you to use ES2016 classes along with the p5.play sprites.</p>
-<p>This project is intended to teach students the use of classes and object-oriented programming.</p>
+<p>p5.js is a great framework to teach students the basic principles of programming: it allows them to quickly jump in and start creating sketches.</p>
+<p>This project uses p5.js and is intended to teach students the use of classes and object-oriented programming. It is inspired by <a href="https://molleindustria.github.io/p5.play/">p5.play</a>, but uses the new ES6 classes and properties.</p>
 <h2>Project startup</h2>
-<ul>
-<li>go to https://github.com/T-INFORMATICA/p5-play-OO</li>
-<li>download ZIP</li>
-<li>extract files to project folder</li>
-</ul>
-<h2>Preparing your project</h2>
-<ul>
-<li>create a folder called <code>scripts</code></li>
-<li>create a file in the <code>scripts</code> folder called <code>[YourGameName].js</code></li>
-<li>Add the file in <code>index.html</code> using a <code>&lt;script&gt;</code> element</li>
-<li>create a <code>class</code> in <code>[YourGameName].js</code> called <code>[YourGameName]</code> that extends from <code>Game</code></li>
-<li>Give it an empty constructor, except for the call to the super constructor</li>
-<li>Open sketch.js</li>
-<li>create a variable <code>game</code> with value <code>null</code></li>
-<li>initialize the variable <code>game</code> in the function <code>setup()</code> with <code>new [YourGameName]()</code></li>
-<li>call <code>game.Update()</code> <em>(mark the capital 'U'!)</em> from the function <code>draw()</code></li>
-<li>test to see if you get a black canvas when running <code>index.html</code> in your browser</li>
-</ul>
-<h2>Creating a class</h2>
-<ol>
-<li>Create a file called <code>[YourClassName].js</code></li>
-<li>Add the file in <code>index.html</code> using a <code>&lt;script&gt;</code> element</li>
-<li>Write the base code for the class in <code>[YourClassName].js</code></li>
-<li>Create an object for that class</li>
-<li>Write the rest of the code for your class</li>
-</ol></article>
+<p>You will need the following file structure:</p>
+<pre class="prettyprint source"><code>index.html
+[MyGameClass].js
+settings/
+    ↳ Settings.js
+</code></pre>
+<p>Where <code>[MyGameClass]</code> is the name of your game.</p>
+<h3>Setting up [MyGameClass].js</h3>
+<p>Make sure you name your file after your game (No worries, you can change it later if you want). For example, if you want to make a Snake game, you might want to call your file <code>Snake.js</code>.</p>
+<p>Having created the file <code>Snake.js</code>, you need to add it to the <code>head</code> element of your <code>index.html</code>. Like this:</p>
+<pre class="prettyprint source lang-html"><code>&lt;!DOCTYPE html>
+&lt;html lang=&quot;en&quot;>
+    &lt;head>
+        &lt;script src=&quot;Snake.js&quot;>&lt;/script>
+    &lt;/head>
+    &lt;body>
+    &lt;/body>
+&lt;/html>
+</code></pre>
+<p>Inside of <code>Snake.js</code> you then create a new class called <code>Snake</code> that extends from <code>Game</code>. Inside the constructor, don't forget to call the constructor of the super class!</p>
+<p>Also, if you want, you can already add an empty <code>Update()</code> method as well.</p>
+<pre class="prettyprint source lang-javascript"><code>class Snake extends Game {
+    constructor() {
+        super();
+    }
+
+    Update() {
+    }
+}
+</code></pre>
+<h3>Setting up Settings.js</h3>
+<p>The <code>Settings.js</code> file contains a <code>Settings</code> class that is necessary for the game to run.</p>
+<p>A minimal <code>Settings</code> class looks like this:</p>
+<blockquote>
+<p><strong>!!!</strong>
+Change <code>MyGameClass</code> to whatever you named the class in <code>[MyGameClass].js</code></p>
+</blockquote>
+<pre class="prettyprint source lang-javascript"><code>class Settings {
+    // IMPORTANT! Change MyGameClass to the name of your game class
+    static GameClass = MyGameClass;
+    
+    // Collision layers where you can put your gameObjects on
+    // Add layers to your own liking...
+    static Layers = {
+        PLAYER: 0,
+        GROUND: 1
+    };
+
+    // Set which layers can collide with which other layers
+    // e.g. objects on the PLAYER layer can collide with objects on the GROUND layer
+    static LayerInteractions = {
+        [Settings.Layers.PLAYER]: [Settings.Layers.GROUND]
+    };
+
+    // background color for your game
+    static BackgroundColor = &quot;#FFF&quot;;
+
+    // width and height of your game
+    static GameWidth = 800;
+    static GameHeight = 600;
+
+    // debug mode: shows stats and collision boxes on screen
+    static Debug = false;
+    // shows stats on screen
+    static ShowStats = true;
+    
+    // shows the grid on screen
+    static ShowGrid = false;
+    // the size of each box in the grid
+    static GridSize = 50;
+}
+</code></pre>
+<h3>using a CDN to include p5 and p5-play-OO</h3>
+<p>Add the following <code>script</code> elements to the <code>head</code> element of your <code>index.html</code>. Make sure these are in the same order, and are loaded in first!</p>
+<pre class="prettyprint source lang-html"><code>    &lt;script src=&quot;https://cdn.jsdelivr.net/npm/p5/lib/p5.js&quot;>&lt;/script>
+    &lt;script src=&quot;https://cdn.jsdelivr.net/gh/t-informatica/p5-play-oo/release/lib.js&quot;>&lt;/script>
+</code></pre>
+<p>A example <code>index.html</code> file might look like this:</p>
+<pre class="prettyprint source lang-html"><code>&lt;!DOCTYPE html>
+&lt;html lang=&quot;en&quot;>
+    &lt;head>
+        &lt;meta charset=&quot;UTF-8&quot;>
+        &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
+        &lt;title>Missile Command&lt;/title>
+        &lt;!-- external lib files -->
+        &lt;script src=&quot;https://cdn.jsdelivr.net/npm/p5@1.2.0/lib/p5.js&quot;>&lt;/script>
+        &lt;script src=&quot;https://cdn.jsdelivr.net/gh/t-informatica/p5-play-oo@1.0.1/release/lib.js&quot;>&lt;/script>
+
+        &lt;!-- your gameobject classes (inherit from GameObject) -->
+
+        &lt;!-- the game class -->
+        &lt;script src=&quot;MyGameClass.js&quot;>&lt;/script>
+        
+        &lt;!-- SETTINGS -->
+        &lt;script src=&quot;settings/Settings.js&quot;>&lt;/script>
+    &lt;/head>
+    &lt;body>
+    &lt;/body>
+&lt;/html>
+</code></pre></article>
     </section>
 
 
