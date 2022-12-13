@@ -15,7 +15,7 @@ class Ball extends GameObject {
         fill("magenta");
         circle(0, 0, this.Width);
 
-        // this.Position.y += this.#movementSpeed.y;
+        this.Position.y += this.#movementSpeed.y;
     }
 
     OnCollide(gameobjectsHit) { 
